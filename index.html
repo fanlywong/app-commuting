@@ -55,12 +55,11 @@
         }
         .btn-ai-glow:active { transform: scale(0.99); background: #1d4ed8; }
 
-        /* 🟢 動態彈性時間軸容器 */
         .timeline { display: flex; justify-content: space-between; align-items: flex-start; background: #090d16; padding: 14px 2px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.03);}
         .step { text-align: center; flex: 1; min-width: 0; font-size: 0.72rem; color: var(--text-sub); overflow: hidden;}
         .step span { display: block; font-size: 1.1rem; margin-bottom: 2px; }
         .step .loc-name { display: block; font-size: 0.65rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1; margin-top: 2px;}
-        .step b { display: block; font-size: 0.9rem; color: #38bdf8; margin-top: 3px; font-weight: 700;}
+        .step b { display: block; font-size: 0.82rem; color: #38bdf8; margin-top: 2px; font-weight: 700;}
         .step b.dest-time { color: var(--clock-gold); font-size: 0.92rem; }
         
         .sub-transfer { display: block; font-size: 0.55rem; color: #f43f5e; font-style: normal; margin-top: 1px; white-space: nowrap; letter-spacing: -0.3px;}
@@ -73,11 +72,12 @@
 
         .sprint-capsule { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #fbbf24; padding: 7px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; display: flex; justify-content: space-between; margin: 8px 0 4px 0; cursor: pointer;}
         .sprint-drawer { display: none; flex-direction: column; gap: 6px; margin-bottom: 8px; padding: 2px; border-left: 1.5px dashed #ef444440; }
-        .sprint-drawer.open { display: flex; }
+        .sprint-drawer.open { display: flex; animation: slideDown 0.2s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 
         .sprint-card-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #1e293b50; border: 1px solid #ef444430; border-radius: 10px; }
 
-        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 12px 14px; background: #090d1680; border-radius: 10px; border: 1px solid #33415540;}
+        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 10px 12px; background: #090d1680; border-radius: 10px; border: 1px solid #33415540;}
         .train.next-train { background: rgba(16,185,129,0.06); border-left: 3.5px solid var(--success); }
         .train-time { font-size: 1.5rem; font-weight: 800; color: var(--success); }
         .train-time.urgent { color: var(--warning); }
@@ -169,7 +169,7 @@
         const MTR_DB = {
             'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石礤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }},
             'TWL': { name: '荃灣綫', color: '#E2231A', order: ['CEN','ADM','TST','JOR','YMT','MOK','PRE','SSP','CSW','LCK','MEF','LAK','KWF','TWH','TSW'], times: { CEN:0, ADM:3, TST:6, JOR:8, YMT:10, MOK:12, PRE:14, SSP:16, CSW:18, LCK:20, MEF:22, LAK:26, KWF:29, TWH:31, TSW:34 }, names: { CEN:'中環', ADM:'金鐘', TST:'尖沙咀', JOR:'佐敦', YMT:'油麻地', MOK:'旺角', PRE:'太子', SSP:'深水埗', CSW:'長沙灣', LCK:'荔枝角', MEF:'美孚', LAK:'荔景', KWF:'葵芳', TWH:'葵興', TSW:'荃灣' }},
-            'ISL': { name: '港島綫', color: '#007FFF', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWHOW','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲箕灣', HFC:'杏花邨', CHW:'柴灣' }}
+            'ISL': { name: '港島綫', color: '#007FFF', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWH','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲箕灣', HFC:'杏花邨', CHW:'柴灣' }}
         };
 
         const PREF_HUBS = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
@@ -399,7 +399,7 @@
             activeRoute = calculateAutoRoute(curCfg.sCode, curCfg.eCode);
             document.getElementById('main-title').innerText = `🏢 ${curCfg.startName} ➔ ${curCfg.destName}`;
             document.getElementById('label-walk-speed').innerText = `${curCfg.walk1}分鐘步速`;
-            document.getElementById('main-card').style.borderTop = `4px solid ${MTR_DB[activeRoute.line1].color}`;
+            document.getElementById('main-card').style.borderTop = `3.5px solid ${MTR_DB[activeRoute.line1].color}`;
         }
 
         async function fetchMTR() {
@@ -426,30 +426,29 @@
             const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), W = curCfg.walk1, now = new Date();
             const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
             
-            // 🛑 【漏洞核心修復】
-            // 舊代碼寫法：let showWalk = walkTrains.length ? walkTrains.slice(0, 2) : t1.slice(0, 2);
-            // 導致當 walkTrains 為空（例如打 10 分鐘，所有即將到站列車都少於 10 分鐘），會直接把未經過濾的原始 t1 吐出來。
-            // 現在修正為：正常步速首選，只允許從「真正符合條件」的 walkTrains 中抽取。如果沒有，就是空陣列。
+            // 🎯 【Bug 完美斬草除根】
+            // 廢除原本危險的保底 fallback。只容許抽取真正符合大於或等於步行時間的班次。
             let showWalk = walkTrains.slice(0, 2);
             let isMid = !walkTrains.length && !sprintTrains.length;
 
             let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 第一程：${MTR_DB[activeRoute.line1].name} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
 
+            // 📢 核心修正：黃色抽屜顯示的計數「sprintTrains.length」與下面跑出來的卡片數量完美對稱
             if (sprintTrains.length > 0) {
                 html += `<div class="sprint-capsule" onclick="toggleSprintDrawer()"><span>💡 已收起 ${sprintTrains.length} 班狂奔列車</span><b id="sprint-arrow-icon">${isSprintOpen ? '▲' : '▼'}</b></div><div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
-                sprintTrains.slice(0, 2).forEach(t => {
+                
+                // 去除 .slice(0, 2) 的粗暴閹割！有多少班，點開就向用家展示多少班
+                sprintTrains.forEach(t => {
                     let sm = parseInt(t.ttnt), hypDest = new Date(now.getTime() + (sm + activeRoute.ride + curCfg.walk2) * 60000);
                     html += `<div class="sprint-card-item"><div><span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span><div style="font-size:0.72rem; color:#94a3b8;">衝到 ➔ <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div></div><span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span></div>`;
                 });
                 html += `</div>`;
             }
 
-            // 🛑 【安全防禦機制】
-            // 如果 walkTrains 裡面空空如也，直接在畫面上貼一張優雅的「理性勸退卡片」，不再造成介面突兀爆開
             if (showWalk.length === 0 && !isMid) {
                 html += `<div class="train" style="border: 1px dashed rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.03);">
-                            <span class="train-label" style="color:var(--warning);">🐢 正常步速已無趕得切嘅車次</span>
-                            <span class="train-time urgent" style="font-size:1.1rem; font-weight:600;">請點開上方狂奔區 🏃‍♂️</span>
+                            <span class="train-label" style="color:var(--warning); font-size:0.82rem; font-weight:600;">🐢 正常步速已無趕得切嘅車次</span>
+                            <span class="train-time urgent" style="font-size:0.88rem; font-weight:700; color:#fbbf24;">請點開上方狂奔區 🏃‍♂️</span>
                          </div>`;
             }
 
@@ -464,9 +463,6 @@
             }
             listHtml.innerHTML = html;
 
-            // 🌟 動態生成行程路標引擎 (動態 4格 vs 5格)
-            // 🐛 修正安全閥：當 showWalk 為空，tMins 不能讀取 showWalk[0]，否則會拋出 NaN 斷氣。
-            // 必須安全向後降級（Fallback）使用即將到站的第一班車 t1[0] 的時間，保住時間軸大時鐘運作！
             let tMins = parseInt((showWalk[0] || t1[0])?.ttnt) || 0;
             let tBoard = new Date(now.getTime() + tMins * 60000);
             let tlContainer = document.getElementById('dynamic-timeline-box');
