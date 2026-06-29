@@ -186,7 +186,7 @@
             'TWL': { name: '荃灣綫', color: '#E2231A', order: ['CEN','ADM','TST','JOR','YMT','MOK','PRE','SSP','CSW','LCK','MEF','LAK','KWF','TWH','TSW'], times: { CEN:0, ADM:3, TST:6, JOR:8, YMT:10, MOK:12, PRE:14, SSP:16, CSW:18, LCK:20, MEF:22, LAK:26, KWF:29, TWH:31, TSW:34 }, names: { CEN:'中環', ADM:'金鐘', TST:'尖沙咀', JOR:'佐敦', YMT:'油麻地', MOK:'旺角', PRE:'太子', SSP:'深水埗', CSW:'長沙灣', LCK:'荔枝角', MEF:'美孚', LAK:'荔景', KWF:'葵芳', TWH:'葵興', TSW:'荃灣' }},
             'TCL': { name: '東涌綫', color: '#F38B00', order: ['HOK','KOW','OLY','NAC','LAK','TSY','SUN','TUC'], times: { HOK:0, KOW:3, OLY:6, NAC:9, LAK:13, TSY:16, SUN:23, TUC:29 }, names: { HOK:'香港', KOW:'九龍', OLY:'奧運', NAC:'南昌', LAK:'荔景', TSY:'青衣', SUN:'欣澳', TUC:'東涌' }},
             'AEL': { name: '機場快綫', color: '#1A949C', order: ['HOK','KOW','TSY','AIR'], times: { HOK:0, KOW:3, TSY:12, AIR:24 }, names: { HOK:'香港', KOW:'九龍', TSY:'青衣', AIR:'赤鱲角機場' }},
-            'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石礤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }}
+            'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石硤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }}
         };
 
         const PREF_HUBS = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM','HOK','KOW','TSY'];
@@ -460,13 +460,12 @@
             }
         }
 
-        /* 🎯 升級大腦：改用 Promise.all 併發獲取整條線路中「所有轉乘車次」的實時 API 數據 */
         async function fetchMTR() {
             if (!activeRoute || activeRoute.legs.length === 0) return;
             const currentW = parseInt(document.getElementById('cfg-walk1').value) || curCfg.walk1;
 
             const fetchPromises = activeRoute.legs.map(async (leg) => {
-                if (leg.line === 'WALK') return { leg, schedule: [] };
+                if (leg.line === 'WALK') return { leg, schedule: null }; // 標記步行節點
                 const dir = MTR_DB[leg.line].order.indexOf(leg.from) < MTR_DB[leg.line].order.indexOf(leg.to) ? 'UP' : 'DOWN';
                 const url = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${leg.line}&sta=${leg.from}`;
                 try {
@@ -484,23 +483,24 @@
             } catch (err) {}
         }
 
-        /* 🎯 完美渲染：動態讀取起點/終點名，並且完整遍歷每一程地鐵的實時到站時間 */
         function renderDashboard(results, dynamicW) {
             const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), now = new Date();
             let html = '';
 
-            results.forEach((res, legIdx) => {
+            // 🛑 【修正核心 2：安全防禦隔離機制】
+            // 建立一條全新的「有效數據分段渲染鏈」，確保就算某一程 API 延遲或回傳空值，前台也能安全跨越，絕不斷氣！
+            let validLegIdx = 0;
+
+            results.forEach((res) => {
                 const { leg, schedule } = res;
-                if (leg.line === 'WALK') return; // 略過香港站/中環站這種步行通道
+                if (leg.line === 'WALK' || !schedule) return; 
 
                 let lineObj = MTR_DB[leg.line];
-                // 為每一程顯示專屬的分段標題
-                html += `<div class="route-sub-title" style="color:${lineObj?.color || '#38bdf8'}; margin-top: ${legIdx > 0 ? '16px' : '4px'};">
-                            🚇 第 ${legIdx + 1} 程：${lineObj?.name}（${STA_INDEX[leg.from].name}站出發）
+                html += `<div class="route-sub-title" style="color:${lineObj?.color || '#38bdf8'}; margin-top: ${validLegIdx > 0 ? '16px' : '4px'};">
+                            🚇 第 ${validLegIdx + 1} 程：${lineObj?.name}（${STA_INDEX[leg.from].name}站出發）
                          </div>`;
 
-                // 🌟 第一程：維持核心邏輯（狂奔區 + 正常步速配對），因為出門這步最關鍵
-                if (legIdx === 0) {
+                if (validLegIdx === 0) {
                     const W = dynamicW;
                     const sprintTrains = schedule.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = schedule.filter(t => parseInt(t.ttnt) >= W);
                     let showWalk = walkTrains.slice(0, 2); let isMid = !walkTrains.length && !sprintTrains.length;
@@ -526,7 +526,6 @@
                         html += `<div class="${i===0 ?'train next-train':'train'}"><span class="train-label">${i===0?'🚶‍♂️ 正常步速（首選）':'🛡️ 次班備用'}</span><span class="train-time ${(m===W||m===W+1)?'urgent':''}">${isNaN(m)?"抵達中":m+" 分鐘"}</span></div>`;
                     });
 
-                    // 依據第一程動態演算出門情緒小板塊
                     eBox.style.display = 'block';
                     if (showWalk.length === 0) {
                         let latestSprintMins = sprintTrains.length > 0 ? parseInt(sprintTrains[sprintTrains.length - 1].ttnt) : 0;
@@ -542,53 +541,71 @@
                         eBox.innerHTML = `😎 時間非常充裕！首選班次喺 ${parseInt(showWalk[0]?.ttnt || 0)} 分鐘後到站，慢慢行即可。`;
                     }
                 } else {
-                    // 🌟 後續轉乘程：清晰排列未來兩班車的動態，讓轉線心理有底
-                    if (schedule.length === 0) {
-                        html += `<div style="text-align:center; padding: 10px; color: #64748b; font-size:0.8rem;">暫無實時班次數據</div>`;
-                    } else {
-                        schedule.slice(0, 2).forEach((t, i) => {
-                            let m = parseInt(t.ttnt);
-                            html += `<div class="train">
-                                        <span class="train-label">${i===0?'⏳ 緊接下一班':'⏳ 隨後班次'}</span>
-                                        <span class="train-time" style="color:var(--text-main); font-size:1.2rem;">${isNaN(m) ? "抵達中" : m + " 分鐘"}</span>
-                                     </div>`;
+                    schedule.slice(0, 2).forEach((t, i) => {
+                        let m = parseInt(t.ttnt);
+                        html += `<div class="train">
+                                    <span class="train-label">${i===0?'⏳ 緊接下一班':'⏳ 隨後班次'}</span>
+                                    <span class="train-time" style="color:var(--text-main); font-size:1.2rem;">${isNaN(m) ? "抵達中" : m + " 分鐘"}</span>
+                                 </div>`;
                         });
-                    }
                 }
+                validLegIdx++;
             });
 
             listHtml.innerHTML = html;
 
             // 倒推和同步下方行程時間軸與總耗時
-            const firstLegRes = results.find(r => r.leg.line !== 'WALK');
+            const firstLegRes = results.find(r => r.schedule && r.schedule.length > 0);
             let firstTrainMins = dynamicW;
-            if (firstLegRes && firstLegRes.schedule.length > 0) {
+            if (firstLegRes) {
                 const walkTrains = firstLegRes.schedule.filter(t => parseInt(t.ttnt) >= dynamicW);
                 firstTrainMins = walkTrains.length > 0 ? (parseInt(walkTrains[0].ttnt) || 0) : dynamicW;
             }
 
             let tCurrent = new Date(now.getTime() + firstTrainMins * 60000);
             
-            // 🎯 修改點：動態帶入自訂地名 curCfg.startName
+            // 🎯 【修正核心 1：動態代入起點名稱】
             let tlHtml = `<div class="step"><span>🏡</span><div class="loc-name">${curCfg.startName}</div><b>${fmtT(now)}</b></div>
                           <div class="arrow-box"><span class="arrow-time">+${curCfg.walk1}分</span>➔</div>`;
 
             let legs = activeRoute.legs;
-            legs.forEach((leg, index) => {
-                let lineObj = MTR_DB[leg.line];
-                let lineName = lineObj ? lineObj.name.replace('綫','') : '步行';
-                tlHtml += `<div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[leg.from].name}</div><b>${fmtT(tCurrent)}</b></div>
-                          <div class="arrow-box"><span class="arrow-time">+${leg.ride}分</span>➔</div>`;
-                tCurrent = new Date(tCurrent.getTime() + leg.ride * 60000);
-                if (index < legs.length - 1) {
-                    tlHtml += `<div class="step"><span>🔄</span><div class="loc-name" style="color:#38bdf8">${STA_INDEX[leg.to].name}</div><b>${fmtT(tCurrent)}</b><em class="sub-transfer">轉${lineName}</em></div>
-                              <div class="arrow-box"><span class="arrow-time">+3分</span>➔</div>`;
-                    tCurrent = new Date(tCurrent.getTime() + 3 * 60000);
+            
+            // 🛑 【修正核心 3：消除中環 ➔ 香港雙重重疊幽靈站點】
+            // 遍歷行程鏈時，如果發現下一程是 WALK，直接將這兩程縮合為同一個「站內連通道」節點！
+            for (let i = 0; i < legs.length; i++) {
+                let leg = legs[i];
+                let nextLeg = legs[i + 1];
+
+                if (nextLeg && nextLeg.line === 'WALK') {
+                    // 縮合：直接把目前地鐵站和下一程的步行合成一個高級的跨綫路節點
+                    tlHtml += `<div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[leg.from].name}</div><b>${fmtT(tCurrent)}</b></div>
+                              <div class="arrow-box"><span class="arrow-time">+${leg.ride + nextLeg.ride}分</span>➔</div>`;
+                    tCurrent = new Date(tCurrent.getTime() + (leg.ride + nextLeg.ride) * 60000);
+                    i++; // 跳過下一程 WALK
+                    
+                    if (i < legs.length - 1) {
+                        tlHtml += `<div class="step"><span>🔄</span><div class="loc-name" style="color:#38bdf8">${STA_INDEX[legs[i].to].name}</div><b>${fmtT(tCurrent)}</b><em class="sub-transfer">站內步行</em></div>
+                                  <div class="arrow-box"><span class="arrow-time">+3分</span>➔</div>`;
+                        tCurrent = new Date(tCurrent.getTime() + 3 * 60000);
+                    }
+                } else if (leg.line !== 'WALK') {
+                    let lineObj = MTR_DB[leg.line];
+                    let lineName = lineObj ? lineObj.name.replace('綫','') : '步行';
+                    
+                    tlHtml += `<div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[leg.from].name}</div><b>${fmtT(tCurrent)}</b></div>
+                              <div class="arrow-box"><span class="arrow-time">+${leg.ride}分</span>➔</div>`;
+                    tCurrent = new Date(tCurrent.getTime() + leg.ride * 60000);
+                    
+                    if (index < legs.length - 1) {
+                        tlHtml += `<div class="step"><span>🔄</span><div class="loc-name" style="color:#38bdf8">${STA_INDEX[leg.to].name}</div><b>${fmtT(tCurrent)}</b><em class="sub-transfer">轉${lineName}</em></div>
+                                  <div class="arrow-box"><span class="arrow-time">+3分</span>➔</div>`;
+                        tCurrent = new Date(tCurrent.getTime() + 3 * 60000);
+                    }
                 }
-            });
+            }
 
             let tDest = new Date(tCurrent.getTime() + curCfg.walk2 * 60000);
-            // 🎯 修改點：動態帶入自訂目的地名 curCfg.destName
+            // 🎯 【修正核心 1：動態代入自訂目的地名】
             tlHtml += `<div class="step"><span>🏁</span><div class="loc-name">${curCfg.destName}</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
             
             document.getElementById('dynamic-timeline-box').innerHTML = tlHtml;
