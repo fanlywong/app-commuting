@@ -33,10 +33,7 @@
 
         .input-with-btn { display: flex; gap: 6px; }
         .btn-walk-api { background: #0284c7; color: white; border: none; padding: 0 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; flex-shrink:0;}
-        
-        .cfg-actions { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-save { flex: 2; background: #059669; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size:1rem;}
-        .btn-cancel { flex: 1; background: transparent; border: 1px solid #64748b; color: #94a3b8; border-radius: 10px; cursor: pointer;}
+        .btn-gps-api { background: #10b981; color: white; border: none; padding: 0 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; flex-shrink:0;}
 
         .timeline { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 15px 4px; border-radius: 12px; margin-top: 10px; }
         .step { text-align: center; flex: 1; font-size: 0.75rem; color: var(--text-sub); overflow: hidden;}
@@ -109,7 +106,12 @@
                 <div class="input-with-btn"><input type="number" id="cfg-walk1" min="1"><button type="button" id="btn-api-w1" class="btn-walk-api" onclick="smartWalk('start')">📍 智能測距</button></div>
             </div>
             
-            <div class="cfg-group cfg-full"><label>由邊個港鐵站上車</label><select id="cfg-start-sta"></select></div>
+            <div class="cfg-group cfg-full"><label>由邊個港鐵站上車</label>
+                <div class="input-with-btn">
+                    <select id="cfg-start-sta"></select>
+                    <button type="button" id="btn-gps" class="btn-gps-api" onclick="geoLocateMTR()">📍 定位最近</button>
+                </div>
+            </div>
             <div class="cfg-group cfg-full"><label>去邊個港鐵站落車</label><select id="cfg-end-sta"></select></div>
             
             <div class="cfg-group"><label>終點門牌名稱</label><input type="text" id="cfg-dest-name"></div>
@@ -182,6 +184,47 @@
             return 3.0;
         }
 
+        // --- 🛰️ 核心外掛：一鍵 GPS 定位最近地鐵站 ---
+        function geoLocateMTR() {
+            const btn = document.getElementById('btn-gps');
+            if (!navigator.geolocation) return alert("你部手機不支援 GPS 定位！");
+            
+            btn.innerText = "🛰️ 尋找中..."; btn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                try {
+                    // 使用 OpenStreetMap 進行周邊雷達掃描
+                    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=MTR+Station&lat=${lat}&lon=${lon}&limit=5`);
+                    const nodes = await r.json();
+                    
+                    let match = null;
+                    for (let node of nodes) {
+                        let fullStr = node.display_name || "";
+                        for (let code in STA_INDEX) {
+                            if (fullStr.includes(STA_INDEX[code].name)) { match = code; break; }
+                        }
+                        if (match) break;
+                    }
+
+                    if (match) {
+                        document.getElementById('cfg-start-sta').value = match;
+                        btn.innerText = `🎯 鄰近:${STA_INDEX[match].name}`;
+                        // 如果有起點名，順便幫你把步速也重新智能更新
+                        if(document.getElementById('cfg-start-name').value) smartWalk('start');
+                    } else {
+                        alert("定位成功，但你方圓幾公里內好似無地鐵站喎！");
+                        btn.innerText = "📍 定位最近";
+                    }
+                } catch(e) { alert("網絡超時，無法聯網搜尋近站。"); btn.innerText = "📍 定位最近"; }
+                setTimeout(() => { btn.innerText = "📍 定位最近"; btn.disabled = false; }, 3000);
+            }, (err) => {
+                alert("無法讀取 GPS 權限，請喺手機設定開啟 Chrome 嘅定位權限！");
+                btn.innerText = "📍 定位最近"; btn.disabled = false;
+            }, { timeout: 8000 });
+        }
+
         async function smartWalk(type) {
             const sCode = type === 'start' ? document.getElementById('cfg-start-sta').value : document.getElementById('cfg-end-sta').value;
             const pName = type === 'start' ? document.getElementById('cfg-start-name').value : document.getElementById('cfg-dest-name').value;
@@ -197,13 +240,13 @@
                 const r1 = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(pName+",香港")}&format=json&limit=1`);
                 const r2 = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sName+",香港")}&format=json&limit=1`);
                 const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
-                if (!d1.length || !d2.length) throw new Error("特區地圖庫找不到該門牌");
+                if (!d1.length || !d2.length) throw new Error("找不到該門牌");
                 const r3 = await fetch(`https://router.project-osrm.org/route/v1/foot/${d1[0].lon},${d1[0].lat};${d2[0].lon},${d2[0].lat}`);
                 const d3 = await r3.json();
                 let mins = Math.round((d3.routes[0].duration / 60) + getMazePenalty(sCode));
                 document.getElementById(targetId).value = mins < 1 ? 1 : mins;
                 btn.innerText = `🎯 ${mins < 1 ? 1 : mins}分`;
-            } catch(e) { alert("自動測距稍遜：" + e.message); btn.innerText = "⚠️ 失敗"; }
+            } catch(e) { alert("自動測距稍遜，可手動修改。"); btn.innerText = "⚠️ 失敗"; }
             setTimeout(() => { btn.innerText = "📍 智能測距"; btn.disabled = false; }, 3000);
         }
 
@@ -221,7 +264,7 @@
                 for (let line2 of lB) {
                     const common = MTR_DB[line1].order.filter(x => MTR_DB[line2].order.includes(x));
                     if (common.length > 0) {
-                        common.sort((a, b) => (PREF_HUBS.indexOf(a) === -1 ? 99 : PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b) === -1 ? 99 : PREF_HUBS.indexOf(b)));
+                        common.sort((a, b) => (PREF_HUBS.indexOf(a) === -1 ? 999 : PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b) === -1 ? 999 : PREF_HUBS.indexOf(b)));
                         let hub = common[0];
                         let t1 = Math.abs(MTR_DB[line1].times[sCode] - MTR_DB[line1].times[hub]);
                         let t2 = Math.abs(MTR_DB[line2].times[hub] - MTR_DB[line2].times[eCode]);
@@ -233,7 +276,7 @@
         }
 
         const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: '形品星寓' };
-        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v5')) || DEF_CFG;
+        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v6')) || DEF_CFG;
         let activeRoute = null;
         let isSprintOpen = false;
 
@@ -248,10 +291,8 @@
             }
         }
 
-        // --- 🧠 核心升級：去重車站智能生成演算法 ---
         function populateSelects() {
             const s1 = document.getElementById('cfg-start-sta'), s2 = document.getElementById('cfg-end-sta');
-            
             const hubs = Object.keys(STA_INDEX).filter(c => STA_INDEX[c].lines.length > 1);
             const VIP_ORDER = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
             hubs.sort((a, b) => (VIP_ORDER.indexOf(a) === -1 ? 999 : VIP_ORDER.indexOf(a)) - (VIP_ORDER.indexOf(b) === -1 ? 999 : VIP_ORDER.indexOf(b)));
@@ -295,7 +336,7 @@
                 sCode: document.getElementById('cfg-start-sta').value, eCode: document.getElementById('cfg-end-sta').value,
                 walk2: parseInt(document.getElementById('cfg-walk2').value) || 10, destName: document.getElementById('cfg-dest-name').value || '終點'
             };
-            localStorage.setItem('my_commute_ai_v5', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
+            localStorage.setItem('my_commute_ai_v6', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
         }
 
         function applyUI() {
@@ -375,7 +416,7 @@
                     <div class="sprint-card-item">
                         <div>
                             <span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span>
-                            <div style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">衝到呢班 ➔ 提早於 <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div>
+                            <div style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">衝到ね班 ➔ 提早於 <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div>
                         </div>
                         <span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span>
                     </div>`;
