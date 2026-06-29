@@ -40,7 +40,7 @@
         
         .line-pill-container { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 8px 0; -webkit-overflow-scrolling: touch; margin-top: 2px;}
         .line-pill-container::-webkit-scrollbar { display: none; }
-        .line-pill { padding: 5px 10px; border-radius: 14px; font-size: 0.7 Spread; font-weight: 700; color: white; cursor: pointer; opacity: 0.4; transition: all 0.2s; white-space: nowrap; border: 1px solid transparent;}
+        .line-pill { padding: 5px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: 700; color: white; cursor: pointer; opacity: 0.4; transition: all 0.2s; white-space: nowrap; border: 1px solid transparent;}
         .line-pill.active { opacity: 1; transform: scale(1.04); box-shadow: 0 2px 8px var(--pill-color); border-color: rgba(255,255,255,0.2);}
 
         option { color: #f8fafc; background: #1e293b; padding: 6px 0;}
@@ -460,65 +460,120 @@
             }
         }
 
+        /* 🎯 升級大腦：改用 Promise.all 併發獲取整條線路中「所有轉乘車次」的實時 API 數據 */
         async function fetchMTR() {
             if (!activeRoute || activeRoute.legs.length === 0) return;
             const currentW = parseInt(document.getElementById('cfg-walk1').value) || curCfg.walk1;
-            const firstLeg = activeRoute.legs[0];
-            const l1 = firstLeg.line, s1 = firstLeg.from, e1 = firstLeg.to;
-            if (l1 === 'WALK') return;
-            const dir1 = MTR_DB[l1].order.indexOf(s1) < MTR_DB[l1].order.indexOf(e1) ? 'UP' : 'DOWN';
-            const u1 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l1}&sta=${s1}`;
+
+            const fetchPromises = activeRoute.legs.map(async (leg) => {
+                if (leg.line === 'WALK') return { leg, schedule: [] };
+                const dir = MTR_DB[leg.line].order.indexOf(leg.from) < MTR_DB[leg.line].order.indexOf(leg.to) ? 'UP' : 'DOWN';
+                const url = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${leg.line}&sta=${leg.from}`;
+                try {
+                    const res = await fetch(url);
+                    const d = await res.json();
+                    return { leg, schedule: d.data[`${leg.line}-${leg.from}`][dir] || [] };
+                } catch (e) {
+                    return { leg, schedule: [] };
+                }
+            });
+
             try {
-                const res = await fetch(u1);
-                const d1 = await res.json();
-                renderDashboard(d1.data[`${l1}-${s1}`][dir1]||[], currentW);
+                const results = await Promise.all(fetchPromises);
+                renderDashboard(results, currentW);
             } catch (err) {}
         }
 
-        function renderDashboard(t1, dynamicW) {
+        /* 🎯 完美渲染：動態讀取起點/終點名，並且完整遍歷每一程地鐵的實時到站時間 */
+        function renderDashboard(results, dynamicW) {
             const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), now = new Date();
-            const W = dynamicW;
-            const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
-            let showWalk = walkTrains.slice(0, 2); let isMid = !walkTrains.length && !sprintTrains.length;
+            let html = '';
 
-            let legs = activeRoute.legs;
-            let routeDesc = '';
-            if (legs.length === 1) {
-                routeDesc = `直達路綫：${MTR_DB[legs[0].line].name}`;
-            } else {
-                routeDesc = `多綫轉乘首程：${MTR_DB[legs[0].line].name} ➔ 中途需喺 ${legs.map(l=>STA_INDEX[l.to].name).slice(0,-1).join('及')} 轉車`;
-            }
-            let html = `<div class="route-sub-title" style="color:${MTR_DB[legs[0].line]?.color || '#38bdf8'}">🚇 ${routeDesc}</div>`;
+            results.forEach((res, legIdx) => {
+                const { leg, schedule } = res;
+                if (leg.line === 'WALK') return; // 略過香港站/中環站這種步行通道
 
-            if (sprintTrains.length > 0) {
-                html += `<div class="sprint-capsule" onclick="toggleSprintDrawer()"><span>💡 已收起 ${sprintTrains.length} 班狂奔列車</span><b id="sprint-arrow-icon">${isSprintOpen ? '▲' : '▼'}</b></div><div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
-                sprintTrains.forEach(t => {
-                    let sm = parseInt(t.ttnt);
-                    html += `<div class="sprint-card-item"><div><span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span></div><span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span></div>`;
-                });
-                html += `</div>`;
-            }
-
-            if (showWalk.length === 0 && !isMid) {
-                html += `<div class="train" style="border: 1px dashed rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.03);">
-                            <span class="train-label" style="color:var(--warning); font-size:0.82rem; font-weight:600;">🐢 正常步速已無趕得切嘅車次</span>
-                            <span class="train-time urgent" style="font-size:0.88rem; font-weight:700; color:#fbbf24;">請點開上方狂奔區 🏃‍♂️</span>
+                let lineObj = MTR_DB[leg.line];
+                // 為每一程顯示專屬的分段標題
+                html += `<div class="route-sub-title" style="color:${lineObj?.color || '#38bdf8'}; margin-top: ${legIdx > 0 ? '16px' : '4px'};">
+                            🚇 第 ${legIdx + 1} 程：${lineObj?.name}（${STA_INDEX[leg.from].name}站出發）
                          </div>`;
-            }
 
-            showWalk.forEach((t, i) => {
-                let m = parseInt(t.ttnt);
-                html += `<div class="${i===0 ?'train next-train':'train'}"><span class="train-label">${i===0?'🚶‍♂️ 正常步速（首選）':'🛡️ 次班備用'}</span><span class="train-time ${(m===W||m===W+1)?'urgent':''}">${isNaN(m)?"抵達中":m+" 分鐘"}</span></div>`;
+                // 🌟 第一程：維持核心邏輯（狂奔區 + 正常步速配對），因為出門這步最關鍵
+                if (legIdx === 0) {
+                    const W = dynamicW;
+                    const sprintTrains = schedule.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = schedule.filter(t => parseInt(t.ttnt) >= W);
+                    let showWalk = walkTrains.slice(0, 2); let isMid = !walkTrains.length && !sprintTrains.length;
+
+                    if (sprintTrains.length > 0) {
+                        html += `<div class="sprint-capsule" onclick="toggleSprintDrawer()"><span>💡 已收起 ${sprintTrains.length} 班狂奔列車</span><b id="sprint-arrow-icon">${isSprintOpen ? '▲' : '▼'}</b></div><div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
+                        sprintTrains.forEach(t => {
+                            let sm = parseInt(t.ttnt);
+                            html += `<div class="sprint-card-item"><div><span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span></div><span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span></div>`;
+                        });
+                        html += `</div>`;
+                    }
+
+                    if (showWalk.length === 0 && !isMid) {
+                        html += `<div class="train" style="border: 1px dashed rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.03);">
+                                    <span class="train-label" style="color:var(--warning); font-size:0.82rem; font-weight:600;">🐢 正常步速已無趕得切嘅車次</span>
+                                    <span class="train-time urgent" style="font-size:0.88rem; font-weight:700; color:#fbbf24;">請點開上方狂奔區 🏃‍♂️</span>
+                                 </div>`;
+                    }
+
+                    showWalk.forEach((t, i) => {
+                        let m = parseInt(t.ttnt);
+                        html += `<div class="${i===0 ?'train next-train':'train'}"><span class="train-label">${i===0?'🚶‍♂️ 正常步速（首選）':'🛡️ 次班備用'}</span><span class="train-time ${(m===W||m===W+1)?'urgent':''}">${isNaN(m)?"抵達中":m+" 分鐘"}</span></div>`;
+                    });
+
+                    // 依據第一程動態演算出門情緒小板塊
+                    eBox.style.display = 'block';
+                    if (showWalk.length === 0) {
+                        let latestSprintMins = sprintTrains.length > 0 ? parseInt(sprintTrains[sprintTrains.length - 1].ttnt) : 0;
+                        if (latestSprintMins < W - 2) {
+                            eBox.className = 'emotion-box mood-chill';
+                            eBox.innerHTML = `🐢 慢慢嚟啦！最遲班車得 ${latestSprintMins} 分鐘，行要 ${W} 分鐘，點跑都衝唔到！正常行去月台坐下一班啦。`;
+                        } else {
+                            eBox.className = 'emotion-box mood-run';
+                            eBox.innerHTML = `⚡ <b>搏盡模式！</b> 狂奔區最遲班次喺 ${latestSprintMins} 分鐘後。正常行（${W}分）會送車尾，但如果你<b>依家即刻跑</b>減 2 分鐘，有望衝到！`;
+                        }
+                    } else {
+                        eBox.className = 'emotion-box mood-chill';
+                        eBox.innerHTML = `😎 時間非常充裕！首選班次喺 ${parseInt(showWalk[0]?.ttnt || 0)} 分鐘後到站，慢慢行即可。`;
+                    }
+                } else {
+                    // 🌟 後續轉乘程：清晰排列未來兩班車的動態，讓轉線心理有底
+                    if (schedule.length === 0) {
+                        html += `<div style="text-align:center; padding: 10px; color: #64748b; font-size:0.8rem;">暫無實時班次數據</div>`;
+                    } else {
+                        schedule.slice(0, 2).forEach((t, i) => {
+                            let m = parseInt(t.ttnt);
+                            html += `<div class="train">
+                                        <span class="train-label">${i===0?'⏳ 緊接下一班':'⏳ 隨後班次'}</span>
+                                        <span class="train-time" style="color:var(--text-main); font-size:1.2rem;">${isNaN(m) ? "抵達中" : m + " 分鐘"}</span>
+                                     </div>`;
+                        });
+                    }
+                }
             });
+
             listHtml.innerHTML = html;
 
-            let tMins = showWalk.length > 0 ? (parseInt(showWalk[0].ttnt) || 0) : W;
-            let tBoard = new Date(now.getTime() + tMins * 60000);
-            let tCurrent = new Date(now.getTime() + tMins * 60000);
+            // 倒推和同步下方行程時間軸與總耗時
+            const firstLegRes = results.find(r => r.leg.line !== 'WALK');
+            let firstTrainMins = dynamicW;
+            if (firstLegRes && firstLegRes.schedule.length > 0) {
+                const walkTrains = firstLegRes.schedule.filter(t => parseInt(t.ttnt) >= dynamicW);
+                firstTrainMins = walkTrains.length > 0 ? (parseInt(walkTrains[0].ttnt) || 0) : dynamicW;
+            }
 
-            let tlHtml = `<div class="step"><span>🏡</span><div class="loc-name">起點處</div><b>${fmtT(now)}</b></div>
+            let tCurrent = new Date(now.getTime() + firstTrainMins * 60000);
+            
+            // 🎯 修改點：動態帶入自訂地名 curCfg.startName
+            let tlHtml = `<div class="step"><span>🏡</span><div class="loc-name">${curCfg.startName}</div><b>${fmtT(now)}</b></div>
                           <div class="arrow-box"><span class="arrow-time">+${curCfg.walk1}分</span>➔</div>`;
 
+            let legs = activeRoute.legs;
             legs.forEach((leg, index) => {
                 let lineObj = MTR_DB[leg.line];
                 let lineName = lineObj ? lineObj.name.replace('綫','') : '步行';
@@ -533,26 +588,12 @@
             });
 
             let tDest = new Date(tCurrent.getTime() + curCfg.walk2 * 60000);
-            tlHtml += `<div class="step"><span>🏁</span><div class="loc-name">目的地</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
+            // 🎯 修改點：動態帶入自訂目的地名 curCfg.destName
+            tlHtml += `<div class="step"><span>🏁</span><div class="loc-name">${curCfg.destName}</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
             
             document.getElementById('dynamic-timeline-box').innerHTML = tlHtml;
             document.getElementById('total-duration').innerText = `共 ${Math.round((tDest - now)/60000)} 分鐘`; 
             document.getElementById('arrive-clock').innerText = fmtC(tDest);
-
-            eBox.style.display = 'block';
-            if (showWalk.length === 0) {
-                let latestSprintMins = sprintTrains.length > 0 ? parseInt(sprintTrains[sprintTrains.length - 1].ttnt) : 0;
-                if (latestSprintMins < W - 2) {
-                    eBox.className = 'emotion-box mood-chill';
-                    eBox.innerHTML = `🐢 慢慢嚟啦！最遲班車得 ${latestSprintMins} 分鐘，行要 ${W} 分鐘，點跑都衝唔到！正常行去月台坐下一班啦。`;
-                } else {
-                    eBox.className = 'emotion-box mood-run';
-                    eBox.innerHTML = `⚡ <b>搏盡模式！</b> 狂奔區最遲班次喺 ${latestSprintMins} 分鐘後。正常行（${W}分）會送車尾，但如果你<b>依家即刻跑</b>減 2 分鐘，有望衝到！`;
-                }
-            } else {
-                eBox.className = 'emotion-box mood-chill';
-                eBox.innerHTML = `😎 時間非常充裕！首選班次喺 ${tMins} 分鐘後到站，慢慢行即可。`;
-            }
         }
     </script>
 </body>
