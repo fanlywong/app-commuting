@@ -13,81 +13,86 @@
     <style>
         :root {
             --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-sub: #94a3b8;
-            --ktl-green: #00A84D; --twl-red: #E2231A; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --clock-gold: #fbbf24; --input-bg: #334155;
+            --ktl-green: #00A84D; --twl-red: #E2231A; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --clock-gold: #fbbf24;
         }
-        body { background: var(--bg-color); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 15px; box-sizing: border-box; }
-        .header-container { display: flex; justify-content: space-between; align-items: center; margin: 5px 0 15px 0; }
-        h1 { font-size: 1.3rem; margin: 0; letter-spacing: 1px; color: #f1f5f9; }
-        .btn-config { background: #334155; color: #e2e8f0; border: none; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
-        .card { background: var(--card-bg); padding: 18px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); border-top: 4px solid var(--ktl-green); transition: border-color 0.3s;}
+        body { background: var(--bg-color); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 16px; box-sizing: border-box; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 16px 0; }
+        h1 { font-size: 1.25rem; margin: 0; letter-spacing: 0.5px; color: #f1f5f9; font-weight: 700; }
         
-        #config-panel { display: none; border-top: 4px solid #38bdf8; font-size: 0.9rem;}
-        .cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn-config { background: #334155; color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 8px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s;}
+        .btn-config:active { transform: scale(0.95); }
+
+        .card { background: var(--card-bg); padding: 18px; border-radius: 18px; margin-bottom: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4); border-top: 4px solid var(--ktl-green); transition: border-color 0.3s;}
+        
+        /* 🛠️ 現代化表單設計 (UI 大整容) */
+        #config-panel { display: none; border-top: 4px solid #38bdf8; }
+        .cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
         .cfg-full { grid-column: span 2; }
-        .cfg-group { display: flex; flex-direction: column; gap: 4px; }
-        .cfg-group label { font-size: 0.75rem; color: var(--text-sub); font-weight: bold;}
-        .cfg-group input, .cfg-group select { background: var(--input-bg); border: 1px solid #475569; color: white; padding: 10px; border-radius: 8px; font-size: 0.95rem; outline: none; width:100%; box-sizing:border-box;}
+        .cfg-group { display: flex; flex-direction: column; gap: 6px; }
+        .cfg-group label { font-size: 0.75rem; color: #94a3b8; font-weight: 600; letter-spacing: 0.5px; }
+        
+        .input-box { display: flex; background: #0f172a; border: 1px solid #334155; border-radius: 12px; overflow: hidden; align-items: center; transition: border-color 0.2s;}
+        .input-box:focus-within { border-color: #38bdf8; }
+        .input-box input, .input-box select { background: transparent; border: none; color: white; padding: 12px; font-size: 0.95rem; width: 100%; outline: none; box-sizing: border-box; }
+        .input-box select { cursor: pointer; }
         
         optgroup { font-weight: bold; color: #38bdf8; background: #0f172a; }
-        option { color: #f8fafc; background: #1e293b; padding: 4px 0;}
+        option { color: #f8fafc; background: #1e293b; padding: 6px 0;}
 
-        .input-with-btn { display: flex; gap: 6px; }
-        .btn-walk-api { background: #0284c7; color: white; border: none; padding: 0 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; flex-shrink:0;}
-        .btn-gps-api { background: #10b981; color: white; border: none; padding: 0 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; white-space: nowrap; flex-shrink:0;}
+        .btn-side { background: #1e293b; color: #38bdf8; border: none; border-left: 1px solid #334155; padding: 0 12px; height: 44px; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0;}
+        .btn-side:hover { color: white; background: #334155; }
+        .btn-side.gps { color: #10b981; }
 
-        .timeline { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 15px 4px; border-radius: 12px; margin-top: 10px; }
+        .cfg-actions { display: flex; gap: 10px; margin-top: 18px; }
+        .btn-ai-glow {
+            flex: 1; background: linear-gradient(135deg, #3b82f6, #06b6d4); color: white; border: none;
+            padding: 14px; border-radius: 14px; font-size: 0.95rem; font-weight: 800; letter-spacing: 0.5px;
+            cursor: pointer; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.35); transition: transform 0.1s; text-align: center;
+        }
+        .btn-ai-glow:active { transform: scale(0.98); }
+        .btn-ghost { background: transparent; border: 1px solid #475569; color: #94a3b8; padding: 0 18px; border-radius: 14px; font-weight: bold; cursor: pointer; }
+
+        .timeline { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 16px 6px; border-radius: 14px; margin-top: 12px; border: 1px solid rgba(255,255,255,0.04);}
         .step { text-align: center; flex: 1; font-size: 0.75rem; color: var(--text-sub); overflow: hidden;}
         .step span { display: block; font-size: 1.2rem; margin-bottom: 4px; }
-        .step .loc-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
-        .step b { display: block; font-size: 0.95rem; color: #38bdf8; margin-top: 4px; font-weight: 600;}
+        .step .loc-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1;}
+        .step b { display: block; font-size: 0.95rem; color: #38bdf8; margin-top: 4px; font-weight: 700;}
         .step b.dest-time { color: var(--clock-gold); font-size: 1.05rem; }
-        .arrow-box { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0;}
-        .arrow-time { font-size: 0.65rem; color: #64748b; background: #1e293b; padding: 1px 4px; border-radius: 4px; font-weight: bold;}
+        .arrow-box { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0;}
+        .arrow-time { font-size: 0.65rem; color: #64748b; background: #1e293b; padding: 2px 4px; border-radius: 4px; font-weight: bold;}
         
-        .section-title { font-size: 1.1rem; font-weight: bold; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
-        .route-sub-title { font-size: 0.85rem; color: #38bdf8; margin: 12px 0 4px 0; font-weight: bold; display: flex; align-items: center; gap: 6px;}
+        .section-title { font-size: 1.05rem; font-weight: 700; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
+        .route-sub-title { font-size: 0.85rem; color: #38bdf8; margin: 14px 0 6px 0; font-weight: 700; display: flex; align-items: center; gap: 6px;}
 
         .sprint-capsule {
             background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24;
-            padding: 8px 14px; border-radius: 30px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+            padding: 8px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
             display: flex; justify-content: space-between; align-items: center; margin: 10px 0 6px 0;
-            user-select: none; transition: all 0.2s ease;
+            user-select: none; transition: background 0.2s;
         }
-        .sprint-capsule:active { transform: scale(0.98); background: rgba(245, 158, 11, 0.2); }
+        .sprint-drawer { display: none; flex-direction: column; gap: 6px; margin-bottom: 10px; padding: 4px; border-left: 2px dashed #ef444450; }
+        .sprint-drawer.open { display: flex; animation: slideDown 0.2s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .sprint-drawer {
-            display: none; flex-direction: column; gap: 6px; margin-bottom: 10px;
-            padding: 4px; border-left: 2px dashed #ef444450;
-        }
-        .sprint-drawer.open { display: flex; animation: slideDown 0.25s ease-out; }
-        
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .sprint-card-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: linear-gradient(145deg, #1e293b, #ef444412); border: 1px solid #ef444440; border-radius: 12px; }
 
-        .sprint-card-item {
-            display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
-            background: linear-gradient(145deg, #1e293b, #ef444412); border: 1px solid #ef444440; border-radius: 12px;
-        }
-
-        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 12px 14px; background: #0f172a80; border-radius: 10px; border: 1px solid #33415550;}
-        .train.next-train { background: #10b98115; border-left: 4px solid var(--success); }
+        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 12px 14px; background: #0f172a80; border-radius: 12px; border: 1px solid #33415550;}
+        .train.next-train { background: rgba(16, 185, 129, 0.08); border-left: 4px solid var(--success); }
         .train-time { font-size: 1.6rem; font-weight: 800; color: var(--success); }
         .train-time.urgent { color: var(--warning); }
         .train-time.too-late { color: var(--danger); }
         .train-label { font-size: 0.88rem; color: var(--text-sub); font-weight: 500;}
 
-        .clock-dashboard { display: flex; background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 15px; margin-top: 15px; align-items: center; }
+        .clock-dashboard { display: flex; background: #0f172a; border: 1px solid #334155; border-radius: 16px; padding: 16px; margin-top: 16px; align-items: center; }
         .clock-box { flex: 1; text-align: center; }
-        .clock-label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; display: block;}
-        .clock-val { font-size: 1.3rem; font-weight: bold; color: var(--text-main); }
+        .clock-label { font-size: 0.78rem; color: var(--text-sub); margin-bottom: 4px; display: block;}
+        .clock-val { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
         .clock-val.target { color: var(--clock-gold); font-size: 1.45rem; }
-        .divider { width: 1px; height: 38px; background: #334155; }
+        .divider { width: 1px; height: 36px; background: #334155; }
 
-        .emotion-box { padding: 14px; border-radius: 12px; text-align: center; font-size: 0.95rem; font-weight: bold; margin-top: 15px; line-height: 1.4; }
-        .mood-chill { background: #10b98120; color: #34d399; } .mood-run { background: #f59e0b20; color: #fbbf24; } .mood-giveup { background: #ef444420; color: #f87171; }
-        #update-time { text-align: center; font-size: 0.75rem; color: #64748b; margin-top: 10px; }
+        .emotion-box { padding: 14px; border-radius: 12px; text-align: center; font-size: 0.92rem; font-weight: bold; margin-top: 16px; line-height: 1.4; }
+        .mood-chill { background: #10b98118; color: #34d399; } .mood-run { background: #f59e0b18; color: #fbbf24; } .mood-giveup { background: #ef444418; color: #f87171; }
+        #update-time { text-align: center; font-size: 0.72rem; color: #64748b; margin-top: 12px; }
     </style>
 </head>
 <body>
@@ -98,31 +103,32 @@
     </div>
 
     <div id="config-panel" class="card">
-        <div class="section-title" style="color:#38bdf8">🧠 全自動尋路設定</div>
+        <div class="section-title" style="color:#38bdf8">🤖 AI 智能尋路設定</div>
         <div class="cfg-grid">
-            <div class="cfg-group"><label>起點門牌名稱</label><input type="text" id="cfg-start-name"></div>
-            <div class="cfg-group">
-                <label>步行至港鐵站 (分)</label>
-                <div class="input-with-btn"><input type="number" id="cfg-walk1" min="1"><button type="button" id="btn-api-w1" class="btn-walk-api" onclick="smartWalk('start')">📍 智能測距</button></div>
+            <div class="cfg-group"><label>起點出發門牌</label>
+                <div class="input-box"><input type="text" id="cfg-start-name" placeholder="例：富強苑"></div>
+            </div>
+            <div class="cfg-group"><label>步行往地鐵站 (分)</label>
+                <div class="input-box"><input type="number" id="cfg-walk1" min="1"><button type="button" class="btn-side" onclick="smartWalk('start')">測距</button></div>
             </div>
             
-            <div class="cfg-group cfg-full"><label>由邊個港鐵站上車</label>
-                <div class="input-with-btn">
-                    <select id="cfg-start-sta"></select>
-                    <button type="button" id="btn-gps" class="btn-gps-api" onclick="geoLocateMTR()">📍 定位最近</button>
-                </div>
+            <div class="cfg-group cfg-full"><label>由邊個車站上車 (AI規劃時會強制覆蓋此欄)</label>
+                <div class="input-box"><select id="cfg-start-sta"></select><button type="button" class="btn-side gps" onclick="geoLocateMTR()">📍 定位</button></div>
             </div>
-            <div class="cfg-group cfg-full"><label>去邊個港鐵站落車</label><select id="cfg-end-sta"></select></div>
+            <div class="cfg-group cfg-full"><label>去邊個車站落車 (AI規劃時會強制覆蓋此欄)</label>
+                <div class="input-box"><select id="cfg-end-sta"></select></div>
+            </div>
             
-            <div class="cfg-group"><label>終點門牌名稱</label><input type="text" id="cfg-dest-name"></div>
-            <div class="cfg-group">
-                <label>出站步行至終點 (分)</label>
-                <div class="input-with-btn"><input type="number" id="cfg-walk2" min="1"><button type="button" id="btn-api-w2" class="btn-walk-api" onclick="smartWalk('dest')">📍 智能測距</button></div>
+            <div class="cfg-group"><label>終點上班門牌</label>
+                <div class="input-box"><input type="text" id="cfg-dest-name" placeholder="例：形品星寓"></div>
+            </div>
+            <div class="cfg-group"><label>出站步往終點 (分)</label>
+                <div class="input-box"><input type="number" id="cfg-walk2" min="1"><button type="button" class="btn-side" onclick="smartWalk('dest')">測距</button></div>
             </div>
         </div>
         <div class="cfg-actions">
-            <button class="btn-cancel" onclick="toggleConfig()">取消</button>
-            <button class="btn-save" onclick="saveAndApply()">🤖 AI 自動規劃並導航</button>
+            <button class="btn-ghost" onclick="toggleConfig()">取消</button>
+            <button id="btn-save-main" class="btn-ai-glow" onclick="runAutoPathfinder()">🤖 一鍵 AI 智能規劃全行程</button>
         </div>
     </div>
 
@@ -140,8 +146,8 @@
     </div>
 
     <div class="card">
-        <div class="section-title"><span id="ui-dir-label">智能軌道追蹤中 ⬇️</span><span style="color:var(--success); font-size:0.8rem">● AI導航運作中</span></div>
-        <div id="train-list"><div style="text-align:center; padding: 20px; color: #94a3b8;">規劃路徑中...</div></div>
+        <div class="section-title"><span id="ui-dir-label">實時列車網絡 ⬇️</span><span style="color:var(--success); font-size:0.78rem">● 導航聯動中</span></div>
+        <div id="train-list"><div style="text-align:center; padding: 20px; color: #94a3b8;">雙核心運算中...</div></div>
         <div class="clock-dashboard">
             <div class="clock-box"><span class="clock-label">⏳ 由出門起計總耗時</span><span class="clock-val" id="total-duration">-- 分鐘</span></div>
             <div class="divider"></div>
@@ -153,10 +159,13 @@
     <div id="update-time">系統載入中...</div>
 
     <script>
+        // 🟢 正確註冊實體 ServiceWorker 檔案
         if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
-            const swCode = `self.addEventListener('fetch', function(e) { e.respondWith(fetch(e.request)); });`;
-            navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' })));
+            navigator.serviceWorker.register('./sw.js').catch(()=>{});
         }
+
+        // 全港車站經緯度雷達庫 (純實體矩陣，拒絕聯網延遲)
+        const MTR_GEO = { LOF:[22.3385,114.1870], WTS:[22.3420,114.1930], SKM:[22.3320,114.1680], PRE:[22.3245,114.1682], MOK:[22.3192,114.1694], YMT:[22.3130,114.1706], JOR:[22.3048,114.1718], TST:[22.2980,114.1722], ADM:[22.2798,114.1648], CEN:[22.2818,114.1582], SHW:[22.2868,114.1520], SYP:[22.2865,114.1428], HKU:[22.2842,114.1338], KET:[22.2812,114.1280], WAC:[22.2778,114.1730], CAB:[22.2802,114.1852], TIN:[22.2825,114.1918], FOH:[22.2888,114.1940], NOP:[22.2912,114.2005], QUB:[22.2882,114.2105], TAK:[22.2848,114.2168], SWH:[22.2820,114.2222], SKW:[22.2788,114.2288], HFC:[22.2768,114.2388], CHW:[22.2648,114.2368], KOT:[22.3370,114.1760], CHH:[22.3348,114.2088], DIH:[22.3402,114.2018], KOB:[22.3238,114.2140], NTK:[22.3158,114.2188], KWT:[22.3122,114.2251], LAT:[22.3072,114.2328], YAT:[22.2982,114.2380], TIK:[22.3070,114.2525], TKO:[22.3088,114.2605], HAH:[22.3158,114.2648], POA:[22.3230,114.2580], HUH:[22.3032,114.1818], MKK:[22.3218,114.1725], TAW:[22.3730,114.1788], SHT:[22.3832,114.1878], FOT:[22.3962,114.1980], UNI:[22.4138,114.2105], TAP:[22.4442,114.1688], TWO:[22.4508,114.1618], FAN:[22.4925,114.1388], SHS:[22.5015,114.1280], LOW:[22.5288,114.1130], EXC:[22.2828,114.1748], HOM:[22.3092,114.1825], WHA:[22.3042,114.1895], OLY:[22.3180,114.1600], KOW:[22.3048,114.1612], HOK:[22.2848,114.1582], NAC:[22.3268,114.1538], LAK:[22.3482,114.1265], TSY:[22.3588,114.1070], SUN:[22.3218,114.0305], TUC:[22.2895,113.9415], SSP:[22.3308,114.1622], CSW:[22.3358,114.1558], LCK:[22.3372,114.1488], MEF:[22.3375,114.1402], KWF:[22.3568,114.1280], TWH:[22.3638,114.1315], TSW:[22.3738,114.1172], TUM:[22.3952,113.9738], SIH:[22.4118,113.9782], TIS:[22.4475,114.0028], LOP:[22.4478,114.0238], YUL:[22.4468,114.0348], KSR:[22.4338,114.0648], TWW:[22.3688,114.1112], AUS:[22.3048,114.1668], ETS:[22.2968,114.1740], TKW:[22.3178,114.1888], SUW:[22.3282,114.1902], KAT:[22.3318,114.2008], HIK:[22.3638,114.1738], CHT:[22.3758,114.1858], STW:[22.3788,114.1948], CIO:[22.3858,114.2038], SHM:[22.3888,114.2088], TSH:[22.4082,114.2222], HEO:[22.4182,114.2268], MOS:[22.4248,114.2318], WKS:[22.4288,114.2428] };
 
         const MTR_DB = {
             'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石硤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }},
@@ -168,14 +177,23 @@
             'TCL': { name: '東涌綫', color: '#F38B00', order: ['HOK','KOW','OLY','NAC','LAK','TSY','SUN','TUC'], times: { HOK:0, KOW:3, OLY:5, NAC:8, LAK:12, TSY:15, SUN:23, TUC:31 }, names: { HOK:'香港', KOW:'九龍', OLY:'奧運', NAC:'南昌', LAK:'荔景', TSY:'青衣', SUN:'欣澳', TUC:'東涌' }}
         };
 
-        const PREF_HUBS = ['MOK','ADM','KOT','DIH','YAT','NOP','TIK','NAC','LAK','MEF','HUH','TAW','CEN'];
+        const PREF_HUBS = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
 
         const STA_INDEX = {};
         for (let l in MTR_DB) {
-            MTR_DB[l].order.forEach(code => {
-                if (!STA_INDEX[code]) STA_INDEX[code] = { name: MTR_DB[l].names[code], lines: [] };
-                STA_INDEX[code].lines.push(l);
+            MTR_DB[l].order.forEach(c => {
+                if (!STA_INDEX[c]) STA_INDEX[c] = { name: MTR_DB[l].names[c], lines: [] };
+                STA_INDEX[c].lines.push(l);
             });
+        }
+
+        function getClosestMTRCode(lat, lon) {
+            let minD = 9999, best = 'MOK';
+            for (let c in MTR_GEO) {
+                let d = Math.hypot(lat - MTR_GEO[c][0], lon - MTR_GEO[c][1]);
+                if (d < minD) { minD = d; best = c; }
+            }
+            return best;
         }
 
         function getMazePenalty(code) {
@@ -184,131 +202,140 @@
             return 3.0;
         }
 
-        // --- 🛰️ 核心外掛：一鍵 GPS 定位最近地鐵站 ---
-        function geoLocateMTR() {
-            const btn = document.getElementById('btn-gps');
-            if (!navigator.geolocation) return alert("你部手機不支援 GPS 定位！");
-            
-            btn.innerText = "🛰️ 尋找中..."; btn.disabled = true;
+        async function geocodeAddress(kw) {
+            try {
+                const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(kw+",香港")}&format=json&limit=1`);
+                const d = await r.json();
+                if(d.length > 0) return { lat: parseFloat(d[0].lat), lon: parseFloat(d[0].lon) };
+            } catch(e) {}
+            return null;
+        }
 
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                try {
-                    // 使用 OpenStreetMap 進行周邊雷達掃描
-                    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=MTR+Station&lat=${lat}&lon=${lon}&limit=5`);
-                    const nodes = await r.json();
-                    
-                    let match = null;
-                    for (let node of nodes) {
-                        let fullStr = node.display_name || "";
-                        for (let code in STA_INDEX) {
-                            if (fullStr.includes(STA_INDEX[code].name)) { match = code; break; }
-                        }
-                        if (match) break;
-                    }
+        // --- 🚀 終極核心：一鍵智能運算全行程大腦 ---
+        async function runAutoPathfinder() {
+            const btn = document.getElementById('btn-save-main');
+            const origText = btn.innerText;
+            btn.innerText = "🧠 AI 地圖尋路掃描中..."; btn.disabled = true;
 
-                    if (match) {
-                        document.getElementById('cfg-start-sta').value = match;
-                        btn.innerText = `🎯 鄰近:${STA_INDEX[match].name}`;
-                        // 如果有起點名，順便幫你把步速也重新智能更新
-                        if(document.getElementById('cfg-start-name').value) smartWalk('start');
-                    } else {
-                        alert("定位成功，但你方圓幾公里內好似無地鐵站喎！");
-                        btn.innerText = "📍 定位最近";
+            let sName = document.getElementById('cfg-start-name').value;
+            let dName = document.getElementById('cfg-dest-name').value;
+            let sCode = document.getElementById('cfg-start-sta').value;
+            let eCode = document.getElementById('cfg-end-sta').value;
+            let w1 = parseInt(document.getElementById('cfg-walk1').value) || 4;
+            let w2 = parseInt(document.getElementById('cfg-walk2').value) || 3;
+
+            try {
+                // 強制覆蓋起點
+                if (sName) {
+                    const c1 = await geocodeAddress(sName);
+                    if (c1) {
+                        sCode = getClosestMTRCode(c1.lat, c1.lon);
+                        document.getElementById('cfg-start-sta').value = sCode;
+                        
+                        let sCoords = MTR_GEO[sCode];
+                        let r = await fetch(`https://router.project-osrm.org/route/v1/foot/${c1.lon},${c1.lat};${sCoords[1]},${sCoords[0]}`);
+                        let rd = await r.json();
+                        w1 = Math.max(1, Math.round((rd.routes[0].duration / 60) + getMazePenalty(sCode)));
+                        document.getElementById('cfg-walk1').value = w1;
                     }
-                } catch(e) { alert("網絡超時，無法聯網搜尋近站。"); btn.innerText = "📍 定位最近"; }
-                setTimeout(() => { btn.innerText = "📍 定位最近"; btn.disabled = false; }, 3000);
-            }, (err) => {
-                alert("無法讀取 GPS 權限，請喺手機設定開啟 Chrome 嘅定位權限！");
-                btn.innerText = "📍 定位最近"; btn.disabled = false;
-            }, { timeout: 8000 });
+                }
+
+                // 強制覆蓋終點
+                if (dName && dName !== 'K11') {
+                    const c2 = await geocodeAddress(dName);
+                    if (c2) {
+                        eCode = getClosestMTRCode(c2.lat, c2.lon);
+                        document.getElementById('cfg-end-sta').value = eCode;
+                        
+                        let eCoords = MTR_GEO[eCode];
+                        let r2 = await fetch(`https://router.project-osrm.org/route/v1/foot/${c2.lon},${c2.lat};${eCoords[1]},${eCoords[0]}`);
+                        let rd2 = await r2.json();
+                        w2 = Math.max(1, Math.round((rd2.routes[0].duration / 60) + getMazePenalty(eCode)));
+                        document.getElementById('cfg-walk2').value = w2;
+                    }
+                } else if (dName === 'K11') {
+                    eCode = 'TST'; document.getElementById('cfg-end-sta').value = 'TST';
+                    w2 = 3; document.getElementById('cfg-walk2').value = 3;
+                }
+
+                curCfg = { startName: sName||'起點', walk1: w1, sCode: sCode, eCode: eCode, walk2: w2, destName: dName||'終點' };
+                localStorage.setItem('my_commute_ai_v8', JSON.stringify(curCfg));
+                toggleConfig(); applyUI(); fetchMTR();
+
+            } catch(e) { alert("智能導航偏差：" + e.message); }
+            btn.innerText = origText; btn.disabled = false;
         }
 
         async function smartWalk(type) {
             const sCode = type === 'start' ? document.getElementById('cfg-start-sta').value : document.getElementById('cfg-end-sta').value;
             const pName = type === 'start' ? document.getElementById('cfg-start-name').value : document.getElementById('cfg-dest-name').value;
             const targetId = type === 'start' ? 'cfg-walk1' : 'cfg-walk2';
-            const btnId = type === 'start' ? 'btn-api-w1' : 'btn-api-w2';
+            if (!pName) return alert('請先輸入門牌名稱！');
             
-            if (!pName) return alert('請填寫地點名稱！');
-            const btn = document.getElementById(btnId); 
-            btn.innerText = "🧠 測算中"; btn.disabled = true;
-            
-            const sName = STA_INDEX[sCode].name + "站";
-            try {
-                const r1 = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(pName+",香港")}&format=json&limit=1`);
-                const r2 = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sName+",香港")}&format=json&limit=1`);
-                const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
-                if (!d1.length || !d2.length) throw new Error("找不到該門牌");
-                const r3 = await fetch(`https://router.project-osrm.org/route/v1/foot/${d1[0].lon},${d1[0].lat};${d2[0].lon},${d2[0].lat}`);
-                const d3 = await r3.json();
-                let mins = Math.round((d3.routes[0].duration / 60) + getMazePenalty(sCode));
-                document.getElementById(targetId).value = mins < 1 ? 1 : mins;
-                btn.innerText = `🎯 ${mins < 1 ? 1 : mins}分`;
-            } catch(e) { alert("自動測距稍遜，可手動修改。"); btn.innerText = "⚠️ 失敗"; }
-            setTimeout(() => { btn.innerText = "📍 智能測距"; btn.disabled = false; }, 3000);
+            const c = await geocodeAddress(pName);
+            if(c) {
+                let sC = MTR_GEO[sCode];
+                let r = await fetch(`https://router.project-osrm.org/route/v1/foot/${c.lon},${c.lat};${sC[1]},${sC[0]}`);
+                let rd = await r.json();
+                document.getElementById(targetId).value = Math.max(1, Math.round((rd.routes[0].duration/60) + getMazePenalty(sCode)));
+            }
+        }
+
+        function geoLocateMTR() {
+            if (!navigator.geolocation) return;
+            navigator.geolocation.getCurrentPosition((pos) => {
+                let best = getClosestMTRCode(pos.coords.latitude, pos.coords.longitude);
+                document.getElementById('cfg-start-sta').value = best;
+                alert(`🛰️ 已為你定位鄰近：${STA_INDEX[best].name}站`);
+            });
         }
 
         function calculateAutoRoute(sCode, eCode) {
-            if (sCode === eCode) return null;
+            if (sCode === eCode) return { type: 0, line1: STA_INDEX[sCode].lines[0], s1: sCode, e1: sCode, ride: 0 };
             const lA = STA_INDEX[sCode].lines, lB = STA_INDEX[eCode].lines;
 
             const directLine = lA.find(l => lB.includes(l));
             if (directLine) {
-                let t = Math.abs(MTR_DB[directLine].times[sCode] - MTR_DB[directLine].times[eCode]) || 1;
-                return { type: 0, line1: directLine, s1: sCode, e1: eCode, ride: t };
+                return { type: 0, line1: directLine, s1: sCode, e1: eCode, ride: Math.abs(MTR_DB[directLine].times[sCode] - MTR_DB[directLine].times[eCode]) || 1 };
             }
 
             for (let line1 of lA) {
                 for (let line2 of lB) {
                     const common = MTR_DB[line1].order.filter(x => MTR_DB[line2].order.includes(x));
                     if (common.length > 0) {
-                        common.sort((a, b) => (PREF_HUBS.indexOf(a) === -1 ? 999 : PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b) === -1 ? 999 : PREF_HUBS.indexOf(b)));
+                        common.sort((a, b) => (PREF_HUBS.indexOf(a)===-1?99:PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b)===-1?99:PREF_HUBS.indexOf(b)));
                         let hub = common[0];
-                        let t1 = Math.abs(MTR_DB[line1].times[sCode] - MTR_DB[line1].times[hub]);
-                        let t2 = Math.abs(MTR_DB[line2].times[hub] - MTR_DB[line2].times[eCode]);
-                        return { type: 1, line1: line1, s1: sCode, e1: hub, line2: line2, s2: hub, e2: eCode, ride: t1 + t2 + 3, xName: STA_INDEX[hub].name };
+                        return { type: 1, line1: line1, s1: sCode, e1: hub, line2: line2, s2: hub, e2: eCode, ride: Math.abs(MTR_DB[line1].times[sCode]-MTR_DB[line1].times[hub]) + Math.abs(MTR_DB[line2].times[hub]-MTR_DB[line2].times[eCode]) + 3, xName: STA_INDEX[hub].name };
                     }
                 }
             }
             return { type: 0, line1: lA[0], s1: sCode, e1: sCode, ride: 15 };
         }
 
-        const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: '形品星寓' };
-        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v6')) || DEF_CFG;
-        let activeRoute = null;
-        let isSprintOpen = false;
+        const DEF_CFG = { startName: '富強苑', walk1: 4, sCode: 'LOF', eCode: 'TST', walk2: 3, destName: 'K11' };
+        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v8')) || DEF_CFG;
+        let activeRoute = null; let isSprintOpen = false;
 
         function toggleSprintDrawer() {
             isSprintOpen = !isSprintOpen;
-            const drawer = document.getElementById('sprint-drawer-box');
-            const arrow = document.getElementById('sprint-arrow-icon');
-            if(drawer) {
-                if(isSprintOpen) drawer.classList.add('open');
-                else drawer.classList.remove('open');
-                arrow.innerText = isSprintOpen ? '▲' : '▼';
-            }
+            document.getElementById('sprint-drawer-box')?.classList.toggle('open', isSprintOpen);
+            document.getElementById('sprint-arrow-icon').innerText = isSprintOpen ? '▲' : '▼';
         }
 
         function populateSelects() {
             const s1 = document.getElementById('cfg-start-sta'), s2 = document.getElementById('cfg-end-sta');
             const hubs = Object.keys(STA_INDEX).filter(c => STA_INDEX[c].lines.length > 1);
-            const VIP_ORDER = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
-            hubs.sort((a, b) => (VIP_ORDER.indexOf(a) === -1 ? 999 : VIP_ORDER.indexOf(a)) - (VIP_ORDER.indexOf(b) === -1 ? 999 : VIP_ORDER.indexOf(b)));
+            hubs.sort((a, b) => (PREF_HUBS.indexOf(a)===-1?99:PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b)===-1?99:PREF_HUBS.indexOf(b)));
 
-            let html = `<optgroup label="── 🔥 核心轉車站 (互通多綫) ──">`;
-            hubs.forEach(c => {
-                let lNames = STA_INDEX[c].lines.map(l => MTR_DB[l].name.replace('綫','')).join('/');
-                html += `<option value="${c}">${STA_INDEX[c].name}站 (${lNames}綫)</option>`;
-            });
+            let html = `<optgroup label="── 🔥 核心轉車站 ──">`;
+            hubs.forEach(c => { html += `<option value="${c}">${STA_INDEX[c].name}站</option>`; });
             html += `</optgroup>`;
 
             for (let l in MTR_DB) {
-                const pureStas = MTR_DB[l].order.filter(c => STA_INDEX[c].lines.length === 1);
-                if (pureStas.length > 0) {
-                    html += `<optgroup label="── ${MTR_DB[l].name} (沿綫獨有站) ──">`;
-                    pureStas.forEach(c => { html += `<option value="${c}">${MTR_DB[l].names[c]}站</option>`; });
+                const pStas = MTR_DB[l].order.filter(c => STA_INDEX[c].lines.length === 1);
+                if (pStas.length > 0) {
+                    html += `<optgroup label="── ${MTR_DB[l].name} ──">`;
+                    pStas.forEach(c => { html += `<option value="${c}">${MTR_DB[l].names[c]}站</option>`; });
                     html += `</optgroup>`;
                 }
             }
@@ -317,46 +344,24 @@
 
         function initApp() {
             populateSelects();
-            document.getElementById('cfg-start-name').value = curCfg.startName;
-            document.getElementById('cfg-walk1').value = curCfg.walk1;
-            document.getElementById('cfg-start-sta').value = curCfg.sCode;
-            document.getElementById('cfg-end-sta').value = curCfg.eCode;
-            document.getElementById('cfg-dest-name').value = curCfg.destName;
-            document.getElementById('cfg-walk2').value = curCfg.walk2;
-            
+            document.getElementById('cfg-start-name').value = curCfg.startName; document.getElementById('cfg-walk1').value = curCfg.walk1;
+            document.getElementById('cfg-start-sta').value = curCfg.sCode; document.getElementById('cfg-end-sta').value = curCfg.eCode;
+            document.getElementById('cfg-dest-name').value = curCfg.destName; document.getElementById('cfg-walk2').value = curCfg.walk2;
             applyUI(); fetchMTR(); setInterval(fetchMTR, 10000);
         }
 
-        function toggleConfig() { const p = document.getElementById('config-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
-
-        function saveAndApply() {
-            if (document.getElementById('cfg-start-sta').value === document.getElementById('cfg-end-sta').value) return alert("起點同終點車站唔可以一樣！");
-            curCfg = {
-                startName: document.getElementById('cfg-start-name').value || '起點', walk1: parseInt(document.getElementById('cfg-walk1').value) || 4,
-                sCode: document.getElementById('cfg-start-sta').value, eCode: document.getElementById('cfg-end-sta').value,
-                walk2: parseInt(document.getElementById('cfg-walk2').value) || 10, destName: document.getElementById('cfg-dest-name').value || '終點'
-            };
-            localStorage.setItem('my_commute_ai_v6', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
-        }
+        function toggleConfig() { document.getElementById('config-panel').style.display = document.getElementById('config-panel').style.display === 'block' ? 'none' : 'block'; }
 
         function applyUI() {
             activeRoute = calculateAutoRoute(curCfg.sCode, curCfg.eCode);
             document.getElementById('main-title').innerText = `🏢 ${curCfg.startName} ➔ ${curCfg.destName}`;
             document.getElementById('label-walk-speed').innerText = `${curCfg.walk1}分鐘步速`;
             document.getElementById('ui-start-name').innerText = curCfg.startName;
-            
-            if (activeRoute.type === 1) {
-                document.getElementById('ui-board-name').innerText = `${STA_INDEX[curCfg.sCode].name}(乘${MTR_DB[activeRoute.line1].name})`;
-                document.getElementById('ui-drop-name').innerText = `${activeRoute.xName}(轉${MTR_DB[activeRoute.line2].name})`;
-            } else {
-                document.getElementById('ui-board-name').innerText = `${STA_INDEX[curCfg.sCode].name}站`;
-                document.getElementById('ui-drop-name').innerText = `${STA_INDEX[curCfg.eCode].name}站`;
-            }
+            document.getElementById('ui-board-name').innerText = activeRoute.type === 1 ? `${STA_INDEX[curCfg.sCode].name}(乘${MTR_DB[activeRoute.line1].name})` : `${STA_INDEX[curCfg.sCode].name}站`;
+            document.getElementById('ui-drop-name').innerText = activeRoute.type === 1 ? `${activeRoute.xName}(轉${MTR_DB[activeRoute.line2].name})` : `${STA_INDEX[curCfg.eCode].name}站`;
             document.getElementById('main-card').style.borderTop = `4px solid ${MTR_DB[activeRoute.line1].color}`;
             document.getElementById('ui-dest-name').innerText = curCfg.destName;
-            document.getElementById('ui-gap1').innerText = `+${curCfg.walk1}分`;
-            document.getElementById('ui-gap2').innerText = `+${activeRoute.ride}分`;
-            document.getElementById('ui-gap3').innerText = `+${curCfg.walk2}分`;
+            document.getElementById('ui-gap1').innerText = `+${curCfg.walk1}分`; document.getElementById('ui-gap2').innerText = `+${activeRoute.ride}分`; document.getElementById('ui-gap3').innerText = `+${curCfg.walk2}分`;
         }
 
         function fmtT(d) { return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; }
@@ -364,108 +369,63 @@
 
         async function fetchMTR() {
             if (!activeRoute) return;
-            const listHtml = document.getElementById('train-list');
             const l1 = activeRoute.line1, s1 = activeRoute.s1, e1 = activeRoute.e1;
             const dir1 = MTR_DB[l1].order.indexOf(s1) < MTR_DB[l1].order.indexOf(e1) ? 'UP' : 'DOWN';
-            const url1 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l1}&sta=${s1}`;
+            const u1 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l1}&sta=${s1}`;
 
-            let url2 = null, dir2 = null, l2 = null, s2 = null;
+            let u2 = null, dir2 = null, l2 = null, s2 = null;
             if (activeRoute.type === 1) {
                 l2 = activeRoute.line2; s2 = activeRoute.s2; let e2 = activeRoute.e2;
                 dir2 = MTR_DB[l2].order.indexOf(s2) < MTR_DB[l2].order.indexOf(e2) ? 'UP' : 'DOWN';
-                url2 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l2}&sta=${s2}`;
+                u2 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l2}&sta=${s2}`;
             }
 
             try {
-                const reqs = [fetch(url1)]; if (url2) reqs.push(fetch(url2));
+                const reqs = [fetch(u1)]; if(u2) reqs.push(fetch(u2));
                 const res = await Promise.all(reqs);
-                const d1 = await res[0].json(); const d2 = url2 ? await res[1].json() : null;
-
+                const d1 = await res[0].json(); const d2 = u2 ? await res[1].json() : null;
                 renderDashboard(d1.data[`${l1}-${s1}`][dir1]||[], d2 ? d2.data[`${l2}-${s2}`][dir2]||[] : null);
-            } catch (err) { listHtml.innerHTML = `<div style="text-align:center; color:#64748b; padding:15px;">⏳ AI 實時追蹤列車中...</div>`; }
-            
-            const now = new Date(); document.getElementById('update-time').innerText = `最後同步: ${fmtT(now)}:${now.getSeconds().toString().padStart(2, '0')}`;
+            } catch (err) {}
+            let now = new Date(); document.getElementById('update-time').innerText = `同步: ${fmtT(now)}:${now.getSeconds().toString().padStart(2, '0')}`;
         }
 
         function renderDashboard(t1, t2) {
-            const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message');
-            const W = curCfg.walk1;
-            let now = new Date();
-            
-            const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt)));
-            const walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
-            
-            let showWalk = walkTrains.length ? walkTrains.slice(0, 2) : t1.slice(0, 2);
-            let isMid = !walkTrains.length && !sprintTrains.length;
+            const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), W = curCfg.walk1, now = new Date();
+            const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
+            let showWalk = walkTrains.length ? walkTrains.slice(0, 2) : t1.slice(0, 2), isMid = !walkTrains.length && !sprintTrains.length;
 
             let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 第一程：${MTR_DB[activeRoute.line1].name} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
 
             if (sprintTrains.length > 0) {
-                html += `
-                <div class="sprint-capsule" onclick="toggleSprintDrawer()">
-                    <span>💡 已收起 ${sprintTrains.length} 班需極速狂奔的列車（點擊搏盡）</span>
-                    <b id="sprint-arrow-icon" style="margin-left:8px;">${isSprintOpen ? '▲' : '▼'}</b>
-                </div>
-                
-                <div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
-                
-                sprintTrains.slice(0, 2).forEach((t) => {
-                    let sm = parseInt(t.ttnt);
-                    let hypDest = new Date(now.getTime() + (sm + activeRoute.ride + curCfg.walk2) * 60000);
-                    html += `
-                    <div class="sprint-card-item">
-                        <div>
-                            <span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span>
-                            <div style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">衝到ね班 ➔ 提早於 <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div>
-                        </div>
-                        <span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span>
-                    </div>`;
+                html += `<div class="sprint-capsule" onclick="toggleSprintDrawer()"><span>💡 已收起 ${sprintTrains.length} 班狂奔列車</span><b id="sprint-arrow-icon">${isSprintOpen ? '▲' : '▼'}</b></div><div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
+                sprintTrains.slice(0, 2).forEach(t => {
+                    let sm = parseInt(t.ttnt), hypDest = new Date(now.getTime() + (sm + activeRoute.ride + curCfg.walk2) * 60000);
+                    html += `<div class="sprint-card-item"><div><span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span><div style="font-size:0.72rem; color:#94a3b8;">衝到 ➔ <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div></div><span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span></div>`;
                 });
                 html += `</div>`;
             }
 
             showWalk.forEach((t, i) => {
                 let m = parseInt(t.ttnt);
-                let isUrgent = (m === W || m === W + 1);
-                let cls = isUrgent ? "urgent" : "";
-                let label = i === 0 ? '🚶‍♂️ 正常步速（穩陣首選）' : '🛡️ 次班備用';
-                
-                html += `<div class="${i===0 ?'train next-train':'train'}"><span class="train-label">${label}</span><span class="train-time ${cls}">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
+                html += `<div class="${i===0 ?'train next-train':'train'}"><span class="train-label">${i===0?'🚶‍♂️ 正常步速（首選）':'🛡️ 次班備用'}</span><span class="train-time ${(m===W||m===W+1)?'urgent':''}">${isNaN(m)?"抵達中":m+" 分鐘"}</span></div>`;
             });
 
-            if (activeRoute.type === 1 && t2 && t2.length) {
-                html += `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line2].color}">🔄 轉車接駁：${MTR_DB[activeRoute.line2].name} (${activeRoute.xName}站轉乘)</div>`;
-                t2.slice(0,2).forEach((t, i) => {
-                    let m = parseInt(t.ttnt);
-                    html += `<div class="train"><span class="train-label">${i===0?'⚡ 預計中轉列車':'🛡️ 次班接駁'}</span><span class="train-time" style="color:#38bdf8">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
-                });
+            if (activeRoute.type === 1 && t2?.length) {
+                html += `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line2].color}">🔄 接駁：${MTR_DB[activeRoute.line2].name} (${activeRoute.xName}站轉乘)</div>`;
+                t2.slice(0,2).forEach((t, i) => { html += `<div class="train"><span class="train-label">${i===0?'⚡ 預計接駁':'🛡️ 次班接駁'}</span><span class="train-time" style="color:#38bdf8">${isNaN(parseInt(t.ttnt))?"抵達中":t.ttnt+" 分鐘"}</span></div>`; });
             }
             listHtml.innerHTML = html;
 
-            let mainAnchorTrain = showWalk[0] || t1[0];
-            let tMins = parseInt(mainAnchorTrain?.ttnt) || 0;
-            let tB = new Date(now.getTime() + tMins*60000);
-            let tE = new Date(tB.getTime() + (activeRoute.ride + curCfg.walk2)*60000);
-            
+            let tMins = parseInt((showWalk[0]||t1[0])?.ttnt) || 0, tB = new Date(now.getTime() + tMins*60000), tE = new Date(tB.getTime() + (activeRoute.ride + curCfg.walk2)*60000);
             document.getElementById('t-start').innerText = fmtT(now); document.getElementById('t-lof').innerText = fmtT(tB);
             document.getElementById('t-mok').innerText = fmtT(new Date(tB.getTime() + (activeRoute.ride - (activeRoute.type?6:0))*60000)); document.getElementById('t-dest').innerText = fmtT(tE);
             document.getElementById('total-duration').innerText = `共 ${Math.round((tE - now)/60000)} 分鐘`; document.getElementById('arrive-clock').innerText = fmtC(tE);
 
-            eBox.style.display = 'block'; 
-            if (isMid) {
-                eBox.className = 'emotion-box mood-giveup';
-                eBox.innerHTML = `🚨 列車剩返 ${tMins} 分鐘！行過去要 ${W} 分鐘，神仙都難救，截的士啦！`;
-            } else if (sprintTrains.length > 0 && isSprintOpen) {
-                let fastestSprint = parseInt(sprintTrains[0].ttnt);
-                eBox.className = 'emotion-box mood-run';
-                eBox.innerHTML = `⚡ <b>搏盡模式開啟！</b> 最近列車 ${fastestSprint} 分鐘後到……<b>快啲拔腿就跑！</b>`;
-            } else if (tMins === W || tMins === W + 1) {
-                eBox.className = 'emotion-box mood-run';
-                eBox.innerHTML = `🔥 <b>黃金出門一刻！</b> 列車 ${tMins} 分鐘後到，你行過去需時 ${W} 分鐘，依家起行啱啱好！`;
-            } else {
-                eBox.className = 'emotion-box mood-chill';
-                eBox.innerHTML = `😎 勁度充裕！最快車喺 ${tMins} 分鐘後，行過去只需 ${W} 分鐘，慢慢嘆多杯水先起行。`;
-            }
+            eBox.style.display = 'block';
+            if (isMid) { eBox.className = 'emotion-box mood-giveup'; eBox.innerHTML = `🚨 列車剩返 ${tMins} 分鐘！行過去要 ${W} 分鐘，截的士啦！`; }
+            else if (sprintTrains.length > 0 && isSprintOpen) { eBox.className = 'emotion-box mood-run'; eBox.innerHTML = `⚡ <b>搏盡模式開啟！</b> 最近列車 ${parseInt(sprintTrains[0].ttnt)} 分鐘後到……<b>快跑！</b>`; }
+            else if (tMins === W || tMins === W + 1) { eBox.className = 'emotion-box mood-run'; eBox.innerHTML = `🔥 <b>黃金出門一刻！</b> 列車 ${tMins} 分鐘後到，依家起行啱啱好！`; }
+            else { eBox.className = 'emotion-box mood-chill'; eBox.innerHTML = `😎 勁度充裕！最快車喺 ${tMins} 分鐘後，慢慢嘆多杯水先起行。`; }
         }
 
         initApp();
