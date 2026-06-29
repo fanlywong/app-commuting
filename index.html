@@ -15,7 +15,7 @@
             --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-sub: #94a3b8;
             --ktl-green: #00A84D; --twl-red: #E2231A; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --clock-gold: #fbbf24; --input-bg: #334155;
         }
-        body { background: var(--bg-color); color: var(--text-main); font-family: -apple-system, Roboto, sans-serif; margin: 0; padding: 15px; box-sizing: border-box; }
+        body { background: var(--bg-color); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 15px; box-sizing: border-box; }
         .header-container { display: flex; justify-content: space-between; align-items: center; margin: 5px 0 15px 0; }
         h1 { font-size: 1.3rem; margin: 0; letter-spacing: 1px; color: #f1f5f9; }
         .btn-config { background: #334155; color: #e2e8f0; border: none; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
@@ -47,12 +47,38 @@
         .section-title { font-size: 1.1rem; font-weight: bold; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
         .route-sub-title { font-size: 0.85rem; color: #38bdf8; margin: 12px 0 4px 0; font-weight: bold; display: flex; align-items: center; gap: 6px;}
 
-        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 10px 12px; background: #0f172a80; border-radius: 10px; border: 1px solid #33415550;}
+        /* 🟢 優雅摺疊膠囊按鈕 */
+        .sprint-capsule {
+            background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24;
+            padding: 8px 14px; border-radius: 30px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; margin: 10px 0 6px 0;
+            user-select: none; transition: all 0.2s ease;
+        }
+        .sprint-capsule:active { transform: scale(0.98); background: rgba(245, 158, 11, 0.2); }
+
+        /* 霧面半透明懸浮狂奔卡 */
+        .sprint-drawer {
+            display: none; flex-direction: column; gap: 6px; margin-bottom: 10px;
+            padding: 4px; border-left: 2px dashed #ef444450;
+        }
+        .sprint-drawer.open { display: flex; animation: slideDown 0.25s ease-out; }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sprint-card-item {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
+            background: linear-gradient(145deg, #1e293b, #ef444412); border: 1px solid #ef444440; border-radius: 12px;
+        }
+
+        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 12px 14px; background: #0f172a80; border-radius: 10px; border: 1px solid #33415550;}
         .train.next-train { background: #10b98115; border-left: 4px solid var(--success); }
         .train-time { font-size: 1.6rem; font-weight: 800; color: var(--success); }
         .train-time.urgent { color: var(--warning); }
         .train-time.too-late { color: var(--danger); }
-        .train-label { font-size: 0.85rem; color: var(--text-sub); font-weight: 500;}
+        .train-label { font-size: 0.88rem; color: var(--text-sub); font-weight: 500;}
 
         .clock-dashboard { display: flex; background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 15px; margin-top: 15px; align-items: center; }
         .clock-box { flex: 1; text-align: center; }
@@ -155,7 +181,6 @@
             return 3.0;
         }
 
-        // --- 重新補回被遺忘的 AI 智能腳程引擎 ---
         async function smartWalk(type) {
             const sCode = type === 'start' ? document.getElementById('cfg-start-sta').value : document.getElementById('cfg-end-sta').value;
             const pName = type === 'start' ? document.getElementById('cfg-start-name').value : document.getElementById('cfg-dest-name').value;
@@ -207,8 +232,20 @@
         }
 
         const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: '形品星寓' };
-        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v2')) || DEF_CFG;
+        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v4')) || DEF_CFG;
         let activeRoute = null;
+        let isSprintOpen = false; // 記憶摺疊卡狀態
+
+        function toggleSprintDrawer() {
+            isSprintOpen = !isSprintOpen;
+            const drawer = document.getElementById('sprint-drawer-box');
+            const arrow = document.getElementById('sprint-arrow-icon');
+            if(drawer) {
+                if(isSprintOpen) drawer.classList.add('open');
+                else drawer.classList.remove('open');
+                arrow.innerText = isSprintOpen ? '▲' : '▼';
+            }
+        }
 
         function populateSelects() {
             const s1 = document.getElementById('cfg-start-sta'), s2 = document.getElementById('cfg-end-sta');
@@ -242,7 +279,7 @@
                 sCode: document.getElementById('cfg-start-sta').value, eCode: document.getElementById('cfg-end-sta').value,
                 walk2: parseInt(document.getElementById('cfg-walk2').value) || 10, destName: document.getElementById('cfg-dest-name').value || '終點'
             };
-            localStorage.setItem('my_commute_ai_v2', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
+            localStorage.setItem('my_commute_ai_v4', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
         }
 
         function applyUI() {
@@ -293,16 +330,53 @@
             const now = new Date(); document.getElementById('update-time').innerText = `最後同步: ${fmtT(now)}:${now.getSeconds().toString().padStart(2, '0')}`;
         }
 
+        // --- 核心改造：摺疊式熱血狂奔卡區塊 ---
         function renderDashboard(t1, t2) {
             const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message');
             const W = curCfg.walk1;
-            const validT1 = t1.filter(t => parseInt(t.ttnt) >= W);
-            let showT1 = validT1.length ? validT1.slice(0,2) : t1.slice(0,2), isMid = !validT1.length;
+            let now = new Date();
+            
+            const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt)));
+            const walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
+            
+            let showWalk = walkTrains.length ? walkTrains.slice(0, 2) : t1.slice(0, 2);
+            let isMid = !walkTrains.length && !sprintTrains.length;
 
             let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 第一程：${MTR_DB[activeRoute.line1].name} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
-            showT1.forEach((t, i) => {
-                let m = parseInt(t.ttnt), cls = isMid ? "too-late" : (m === W || m === W + 1) ? "urgent" : "";
-                html += `<div class="${i===0?'train next-train':'train'}"><span class="train-label">${i===0?'🎯 最快趕得上':'🛡️ 次班備用'}</span><span class="train-time ${cls}">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
+
+            // 🟢 如果偵測到有跑步車，先插入摺疊膠囊按鈕
+            if (sprintTrains.length > 0) {
+                html += `
+                <div class="sprint-capsule" onclick="toggleSprintDrawer()">
+                    <span>💡 已收起 ${sprintTrains.length} 班需極速狂奔的列車（點擊搏盡）</span>
+                    <b id="sprint-arrow-icon" style="margin-left:8px;">${isSprintOpen ? '▲' : '▼'}</b>
+                </div>
+                
+                <div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
+                
+                sprintTrains.slice(0, 2).forEach((t) => {
+                    let sm = parseInt(t.ttnt);
+                    let hypDest = new Date(now.getTime() + (sm + activeRoute.ride + curCfg.walk2) * 60000);
+                    html += `
+                    <div class="sprint-card-item">
+                        <div>
+                            <span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span>
+                            <div style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">衝到呢班 ➔ 提早於 <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div>
+                        </div>
+                        <span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span>
+                    </div>`;
+                });
+                html += `</div>`; // 完結霧面抽屜
+            }
+
+            // 穩陣行路車專區（永遠放主視覺）
+            showWalk.forEach((t, i) => {
+                let m = parseInt(t.ttnt);
+                let isUrgent = (m === W || m === W + 1);
+                let cls = isUrgent ? "urgent" : "";
+                let label = i === 0 ? '🚶‍♂️ 正常步速（穩陣首選）' : '🛡️ 次班備用';
+                
+                html += `<div class="${i===0 ?'train next-train':'train'}"><span class="train-label">${label}</span><span class="train-time ${cls}">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
             });
 
             if (activeRoute.type === 1 && t2 && t2.length) {
@@ -314,15 +388,31 @@
             }
             listHtml.innerHTML = html;
 
-            let tMins = parseInt(showT1[0]?.ttnt) || 0;
-            let now = new Date(), tB = new Date(now.getTime() + tMins*60000), tE = new Date(tB.getTime() + (activeRoute.ride + curCfg.walk2)*60000);
+            // 死守穩陣線大時鐘
+            let mainAnchorTrain = showWalk[0] || t1[0];
+            let tMins = parseInt(mainAnchorTrain?.ttnt) || 0;
+            let tB = new Date(now.getTime() + tMins*60000);
+            let tE = new Date(tB.getTime() + (activeRoute.ride + curCfg.walk2)*60000);
             
             document.getElementById('t-start').innerText = fmtT(now); document.getElementById('t-lof').innerText = fmtT(tB);
             document.getElementById('t-mok').innerText = fmtT(new Date(tB.getTime() + (activeRoute.ride - (activeRoute.type?6:0))*60000)); document.getElementById('t-dest').innerText = fmtT(tE);
             document.getElementById('total-duration').innerText = `共 ${Math.round((tE - now)/60000)} 分鐘`; document.getElementById('arrive-clock').innerText = fmtC(tE);
 
-            eBox.style.display = 'block'; eBox.className = 'emotion-box ' + (isMid ? 'mood-giveup' : (tMins === W || tMins === W+1) ? 'mood-run' : 'mood-chill');
-            eBox.innerHTML = isMid ? `🚨 列車剩返 ${tMins} 分鐘！行過去要 ${W} 分鐘，神仙都難救，截的士啦！` : (tMins === W || tMins === W+1) ? `🔥 <b>黃金出門一刻！</b> 列車 ${tMins} 分鐘後到，你行過去需時 ${W} 分鐘，依家起行啱啱好！` : `😎 勁度充裕！最快車喺 ${tMins} 分鐘後，行過去只需 ${W} 分鐘，慢慢嘆多杯水先起行。`;
+            eBox.style.display = 'block'; 
+            if (isMid) {
+                eBox.className = 'emotion-box mood-giveup';
+                eBox.innerHTML = `🚨 列車剩返 ${tMins} 分鐘！行過去要 ${W} 分鐘，神仙都難救，截的士啦！`;
+            } else if (sprintTrains.length > 0 && isSprintOpen) {
+                let fastestSprint = parseInt(sprintTrains[0].ttnt);
+                eBox.className = 'emotion-box mood-run';
+                eBox.innerHTML = `⚡ <b>搏盡模式開啟！</b> 最近列車 ${fastestSprint} 分鐘後到……<b>快啲拔腿就跑！</b>`;
+            } else if (tMins === W || tMins === W + 1) {
+                eBox.className = 'emotion-box mood-run';
+                eBox.innerHTML = `🔥 <b>黃金出門一刻！</b> 列車 ${tMins} 分鐘後到，你行過去需時 ${W} 分鐘，依家起行啱啱好！`;
+            } else {
+                eBox.className = 'emotion-box mood-chill';
+                eBox.innerHTML = `😎 勁度充裕！最快車喺 ${tMins} 分鐘後，行過去只需 ${W} 分鐘，慢慢嘆多杯水先起行。`;
+            }
         }
 
         initApp();
