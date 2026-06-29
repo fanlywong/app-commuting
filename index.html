@@ -60,17 +60,17 @@
         }
         .btn-ai-glow:active { transform: scale(0.99); background: #1d4ed8; }
 
-        .timeline { display: flex; justify-content: space-between; align-items: flex-start; background: #090d16; padding: 14px 2px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.03);}
-        .step { text-align: center; flex: 1; min-width: 0; font-size: 0.72rem; color: var(--text-sub); overflow: hidden;}
+        .timeline { display: flex; justify-content: space-between; align-items: flex-start; background: #090d16; padding: 14px 2px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.03); overflow-x: auto;}
+        .step { text-align: center; flex: 1; min-width: 65px; font-size: 0.72rem; color: var(--text-sub); }
         .step span { display: block; font-size: 1.1rem; margin-bottom: 2px; }
-        .step .loc-name { display: block; font-size: 0.65rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1; margin-top: 2px;}
+        .step .loc-name { display: block; font-size: 0.65rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1; margin-top: 2px; padding: 0 2px;}
         .step b { display: block; font-size: 0.82rem; color: #38bdf8; margin-top: 2px; font-weight: 700;}
         .step b.dest-time { color: var(--clock-gold); font-size: 0.92rem; }
         
         .sub-transfer { display: block; font-size: 0.55rem; color: #f43f5e; font-style: normal; margin-top: 1px; white-space: nowrap; letter-spacing: -0.3px;}
 
-        .arrow-box { display: flex; flex-direction: column; align-items: center; width: 22px; flex-shrink: 0; margin-top: 4px;}
-        .arrow-time { font-size: 0.58rem; color: #64748b; background: #111827; padding: 1px 3px; border-radius: 3px; font-weight: bold;}
+        .arrow-box { display: flex; flex-direction: column; align-items: center; width: 26px; flex-shrink: 0; margin-top: 4px;}
+        .arrow-time { font-size: 0.54rem; color: #64748b; background: #111827; padding: 1px 2px; border-radius: 3px; font-weight: bold; white-space: nowrap;}
         
         .section-title { font-size: 0.98rem; font-weight: 700; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
         .route-sub-title { font-size: 0.82rem; color: #38bdf8; margin: 12px 0 5px 0; font-weight: 700; display: flex; align-items: center; gap: 5px;}
@@ -178,7 +178,7 @@
             navigator.serviceWorker.register('./sw.js').catch(()=>{});
         }
 
-        const MTR_GEO = { LOF:[22.3385,114.1870], WTS:[22.3420,114.1930], SKM:[22.3320,114.1680], PRE:[22.3245,114.1682], MOK:[22.3192,114.1694], YMT:[22.3130,114.1706], JOR:[22.3048,114.1718], TST:[22.2980,114.1722], ADM:[22.2798,114.1648], CEN:[22.2818,114.1582], SHW:[22.2868,114.1520], SYP:[22.2865,114.1428], HKU:[22.2842,114.1338], KET:[22.2812,114.1280], WAC:[22.2778,114.1730], CAB:[22.2802,114.1852], TIN:[22.2825,114.1918], FOH:[22.2888,114.1940], NOP:[22.2912,114.2005], QUB:[22.2882,114.2105], TAK:[22.2848,114.2168], SWH:[22.2820,114.2222], SKW:[22.2788,114.2288], HFC:[22.2768,114.2388], CHW:[22.2648,114.2368], KOT:[22.3370,114.1760], CHH:[22.3348,114.2088], DIH:[22.3402,114.2018], KOB:[22.3238,114.2140], NTK:[22.3158,114.2188], KWT:[22.3122,114.2251], LAT:[22.3072,114.2328], YAT:[22.2982,114.2380], TIK:[22.3070,114.2525], TKO:[22.3088,114.2605], HAH:[22.3158,114.2648], POA:[22.3230,114.2580], HUH:[22.3032,114.1818], MKK:[22.3218,114.1725], TAW:[22.3730,114.1788], SHT:[22.3832,114.1878], FOT:[22.3962,114.1980], UNI:[22.4138,114.2105], TAP:[22.4442,114.1688], TWO:[22.4508,114.1618], FAN:[22.4925,114.1388], SHS:[22.5015,114.1280], LOW:[22.5288,114.1130], EXC:[22.2828,114.1748], HOM:[22.3092,114.1825], WHA:[22.3042,114.1895], OLY:[22.3180,114.1600], KOW:[22.3048,114.1612], HOK:[22.2848,114.1582], NAC:[22.3268,114.1538], LAK:[22.3482,114.1265], TSY:[22.3588,114.1070], SUN:[22.3218,114.0305], TUC:[22.2895,113.9415], SSP:[22.3308,114.1622], CSW:[22.3358,114.1558], LCK:[22.3372,114.1488], MEF:[22.3375,114.1402], KWF:[22.3568,114.1280], TWH:[22.3638,114.1315], TSW:[22.3738,114.1172], TUM:[22.3952,113.9738], SIH:[22.4118,113.9782], TIS:[22.4475,114.0028], LOP:[22.4478,114.0238], YUL:[22.4468,114.0348], KSR:[22.4338,114.0648], TWW:[22.3688,114.1112], AUS:[22.3048,114.1668], ETS:[22.2968,114.1740], TKW:[22.3178,114.1888], SUW:[22.3282,114.1902], KAT:[22.3318,114.2008], HIK:[22.3638,114.1738], CHT:[22.3758,114.1858], STW:[22.3788,114.1948], CIO:[22.3858,114.2038], SHM:[22.3888,114.2088], TSH:[22.4082,114.2222], HEO:[22.4182,114.2268], MOS:[22.4248,114.2318], WKS:[22.4288,114.2428] };
+        const MTR_GEO = { LOF:[22.3385,114.1870], WTS:[22.3420,114.1930], SKM:[22.3320,114.1680], PRE:[22.3245,114.1682], MOK:[22.3192,114.1694], YMT:[22.3130,114.1706], JOR:[22.3048,114.1718], TST:[22.2980,114.1722], ADM:[22.2798,114.1648], CEN:[22.2818,114.1582], SHW:[22.2868,114.1520], SYP:[22.2865,114.1428], HKU:[22.2842,114.1338], KET:[22.2812,114.1280], WAC:[22.2778,114.1730], CAB:[22.2802,114.1852], TIN:[22.2825,114.1918], FOH:[22.2888,114.1940], NOP:[22.2912,114.2005], QUB:[22.2882,114.2105], TAK:[22.2848,114.2168], SWH:[22.2820,114.2222], SKW:[22.2788,114.2288], HFC:[22.2768,114.2388], CHW:[22.2648,114.2368], KOT:[22.3370,114.1760], CHH:[22.3348,114.2088], DIH:[22.3402,114.2018], KOB:[22.3238,114.2140], NTK:[22.3158,114.2188], KWT:[22.3122,114.2251], LAT:[22.3072,114.2328], YAT:[22.2982,114.2380], TIK:[22.3070,114.2525], TKO:[22.3088,114.2605], HAH:[22.3158,114.2648], POA:[22.3230,114.2580], HUH:[22.3032,114.1818], MKK:[22.3218,114.1725], TAW:[22.3730,114.1788], SHT:[22.3832,114.1878], FOT:[22.3962,114.1980], UNI:[22.4138,114.2105], TAP:[22.4442,114.1688], TWO:[22.4508,114.1618], FAN:[22.4925,114.1388], SHS:[22.5015,114.1280], LOW:[22.5288,114.1130], EXC:[22.2828,114.1748], HOM:[22.3092,114.1825], WHA:[22.3042,114.1895], OLY:[22.3180,114.1600], KOW:[22.3048,114.1612], HOK:[22.2848,114.1582], NAC:[22.3268,114.1538], LAK:[22.3482,114.1265], TSY:[22.3588,114.1070], SUN:[22.3218,114.0305], TUC:[22.2895,113.9415], SSP:[22.3308,114.1622], CSW:[22.3358,114.1558], LCK:[22.3372,114.1488], MEF:[22.3375,114.1402], KWF:[22.3568,114.1280], TWH:[22.3638,113.1315], TSW:[22.3738,114.1172], TUM:[22.3952,113.9738], SIH:[22.4118,113.9782], TIS:[22.4475,114.0028], LOP:[22.4478,114.0238], YUL:[22.4468,114.0348], KSR:[22.4338,114.0648], TWW:[22.3688,114.1112], AUS:[22.3048,114.1668], ETS:[22.2968,114.1740], TKW:[22.3178,114.1888], SUW:[22.3282,114.1902], KAT:[22.3318,114.2008], HIK:[22.3638,114.1738], CHT:[22.3758,114.1858], STW:[22.3788,114.1948], CIO:[22.3858,114.2038], SHM:[22.3888,114.2088], TSH:[22.4082,114.2222], HEO:[22.4182,114.2268], MOS:[22.4248,114.2318], WKS:[22.4288,114.2428], LHP:[22.2988,114.2688], AIR:[22.3080,113.9260] };
 
         const MTR_DB = {
             'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石礤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }},
@@ -187,12 +187,12 @@
             'EAL': { name: '東鐵綫', color: '#61B4E4', order: ['ADM','EXC','HUH','HOM','MKK','KOT','TAW','SHT','FOT','UNI','TAP','TWO','FAN','SHS','LOW'], times: { ADM:0, EXC:3, HUH:5, HOM:7, MKK:9, KOT:12, TAW:15, SHT:18, FOT:21, UNI:24, TAP:28, TWO:31, FAN:35, SHS:38, LOW:43 }, names: { ADM:'金鐘', EXC:'會展', HUH:'紅磡', HOM:'何文田', MKK:'旺角東', KOT:'九龍塘', TAW:'大圍', SHT:'沙田', FOT:'火炭', UNI:'大學', TAP:'大埔墟', TWO:'太和', FAN:'粉嶺', SHS:'上水', LOW:'羅湖' }},
             'TML': { name: '屯馬綫', color: '#9A381E', order: ['TUM','SIH','TIS','LOP','YUL','KSR','TWW','MEF','NAC','AUS','ETS','JOR','TST','HUH','HOM','TKW','SUW','KAT','DIH','CHH','HIK','TAW','CHT','STW','CIO','SHM','TSH','HEO','MOS','WKS'], times: { TUM:0, SIH:3, TIS:6, LOP:9, YUL:11, KSR:15, TWW:20, MEF:25, NAC:28, AUS:31, ETS:34, JOR:36, TST:38, HUH:41, HOM:43, TKW:46, SUW:48, KAT:51, DIH:54, CHH:56, HIK:59, TAW:62, CHT:64, STW:66, CIO:68, SHM:70, TSH:73, HEO:75, MOS:77, WKS:80 }, names: { TUM:'屯門', SIH:'兆康', TIS:'天水圍', LOP:'朗屏', YUL:'元朗', KSR:'錦上路', TWW:'荃灣西', MEF:'美孚', NAC:'南昌', AUS:'柯士甸', ETS:'尖東', JOR:'佐敦', TST:'尖沙咀', HUH:'紅磡', HOM:'何文田', TKW:'土瓜灣', SUW:'宋皇臺', KAT:'啟德', DIH:'鑽石山', CHH:'彩虹', HIK:'顯徑', TAW:'大圍', CHT:'車公廟', STW:'沙田圍', CIO:'第一城', SHM:'石門', TSH:'大水坑', HEO:'恆安', MOS:'馬鞍山', WKS:'烏溪沙' }},
             'TCL': { name: '東涌綫', color: '#F38B00', order: ['HOK','CEN','KOW','OLY','NAC','LAK','TSY','SUN','TUC'], times: { HOK:0, CEN:1, KOW:3, OLY:6, NAC:9, LAK:13, TSY:16, SUN:23, TUC:29 }, names: { HOK:'香港', CEN:'中環', KOW:'九龍', OLY:'奧運', NAC:'南昌', LAK:'荔景', TSY:'青衣', SUN:'欣澳', TUC:'東涌' }},
-            'TKL': { name: '將軍澳綫', color: '#8D9020', order: ['NOP','QUB','YAT','TIK','TKO','HAH','POA'], times: { NOP:0, QUB:3, YAT:6, TIK:9, TKO:12, HAH:15, POA:18 }, names: { NOP:'北角', QUB:'鰂魚涌', YAT:'油塘', TIK:'調景嶺', TKO:'將軍澳', HAH:'坑口', POA:'寶琳' }},
+            'TKL': { name: '將軍澳綫', color: '#8D9020', order: ['NOP','QUB','YAT','TIK','TKO','HAH','POA','LHP'], times: { NOP:0, QUB:3, YAT:6, TIK:9, TKO:12, HAH:15, POA:18, LHP:16 }, names: { NOP:'北角', QUB:'鰂魚涌', YAT:'油塘', TIK:'調景嶺', TKO:'將軍澳', HAH:'坑口', POA:'寶琳', LHP:'康城' }},
             'SIL': { name: '南港島綫', color: '#B5BD00', order: ['ADM','WCH','LET','SOH'], times: { ADM:0, WCH:4, LET:7, SOH:11 }, names: { ADM:'金鐘', WCH:'黃竹坑', LET:'利東', SOH:'海怡半島' }},
-            'DRL': { name: '迪士尼綫', color: '#F58220', order: ['SUN','迪士尼'], times: { SUN:0, 迪士尼:5 }, names: { SUN:'欣澳', 迪士尼:'迪士尼' }}
+            'AEL': { name: '機場快綫', color: '#007078', order: ['HOK','KOW','TSY','AIR'], times: { HOK:0, KOW:3, TSY:11, AIR:24 }, names: { HOK:'香港', KOW:'九龍', TSY:'青衣', AIR:'機場' }}
         };
 
-        const PREF_HUBS = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
+        const PREF_HUBS = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM','TSY','HOK'];
 
         const STA_INDEX = {};
         for (let l in MTR_DB) {
@@ -215,8 +215,8 @@
         }
 
         function getMazePenalty(code) {
-            if (['HKU','SYP','QUB','HOM','LAT','YAT','DIH','EXC','ADM','CEN','TST'].includes(code)) return 4.5;
-            if (['KWT','NTK','KOB','CHH','SHS','FAN','TAP','UNI','FOT','SHT','TAW'].includes(code)) return 1.0;
+            if (['HKU','SYP','QUB','HOM','LAT','YAT','DIH','EXC','ADM','CEN','TST','HOK'].includes(code)) return 4.5;
+            if (['KWT','NTK','KOB','CHH','SHS','FAN','TAP','UNI','FOT','SHT','TAW','LHP','AIR'].includes(code)) return 1.0;
             return 3.0;
         }
 
@@ -277,13 +277,9 @@
             if (!queryName) return alert("🚨 請先輸入地名門牌，先可以幫你精準定位車站！");
 
             let targetCode = 'MOK';
-            if (queryName.toUpperCase() === 'APM') { targetCode = 'KWT'; }
-            else if (queryName.toUpperCase() === 'K11') { targetCode = 'TST'; }
-            else {
-                const coord = await geocodeAddress(queryName);
-                if (coord) { targetCode = getClosestMTRCode(coord.lat, coord.lon); }
-                else { return alert("⚠️ 找不到該地名坐標，請輸入更精確的香港街道或屋苑名稱！"); }
-            }
+            const coord = await geocodeAddress(queryName);
+            if (coord) { targetCode = getClosestMTRCode(coord.lat, coord.lon); }
+            else { return alert("⚠️ 找不到該地名坐標，請輸入更精確的香港街道或屋苑名稱！"); }
 
             let belongLine = STA_INDEX[targetCode].lines[0];
             selectLinePill(type, belongLine);
@@ -341,25 +337,19 @@
             let w2 = parseInt(document.getElementById('cfg-walk2').value) || 3;
 
             try {
-                if (sName.toUpperCase() === 'APM') { sCode = 'KWT'; w1 = 4; } 
-                else {
-                    const c1 = await geocodeAddress(sName);
-                    if (c1) {
-                        sCode = getClosestMTRCode(c1.lat, c1.lon);
-                        let r = await fetch(`https://router.project-osrm.org/route/v1/foot/${c1.lon},${c1.lat};${MTR_GEO[sCode][1]},${MTR_GEO[sCode][0]}`);
-                        let rd = await r.json();
-                        w1 = Math.max(1, Math.round((rd.routes[0].duration / 60) + getMazePenalty(sCode)));
-                    }
+                const c1 = await geocodeAddress(sName);
+                if (c1) {
+                    sCode = getClosestMTRCode(c1.lat, c1.lon);
+                    let r = await fetch(`https://router.project-osrm.org/route/v1/foot/${c1.lon},${c1.lat};${MTR_GEO[sCode][1]},${MTR_GEO[sCode][0]}`);
+                    let rd = await r.json();
+                    w1 = Math.max(1, Math.round((rd.routes[0].duration / 60) + getMazePenalty(sCode)));
                 }
-                if (dName.toUpperCase() === 'K11') { eCode = 'TST'; w2 = 3; } 
-                else {
-                    const c2 = await geocodeAddress(dName);
-                    if (c2) {
-                        eCode = getClosestMTRCode(c2.lat, c2.lon);
-                        let r2 = await fetch(`https://router.project-osrm.org/route/v1/foot/${c2.lon},${c2.lat};${MTR_GEO[eCode][1]},${MTR_GEO[eCode][0]}`);
-                        let rd2 = await r2.json();
-                        w2 = Math.max(1, Math.round((rd2.routes[0].duration / 60) + getMazePenalty(eCode)));
-                    }
+                const c2 = await geocodeAddress(dName);
+                if (c2) {
+                    eCode = getClosestMTRCode(c2.lat, c2.lon);
+                    let r2 = await fetch(`https://router.project-osrm.org/route/v1/foot/${c2.lon},${c2.lat};${MTR_GEO[eCode][1]},${MTR_GEO[eCode][0]}`);
+                    let rd2 = await r2.json();
+                    w2 = Math.max(1, Math.round((rd2.routes[0].duration / 60) + getMazePenalty(eCode)));
                 }
 
                 curCfg = { startName: sName, walk1: w1, sCode: sCode, eCode: eCode, walk2: w2, destName: dName };
@@ -390,8 +380,6 @@
             const pName = type === 'start' ? document.getElementById('cfg-start-name').value : document.getElementById('cfg-dest-name').value;
             const targetId = type === 'start' ? 'cfg-walk1' : 'cfg-walk2';
             if (!pName) return alert('請先輸入起點或終點！');
-            if(type === 'start' && pName.toUpperCase() === 'APM') { document.getElementById(targetId).value = 4; return; }
-            if(type === 'dest' && pName.toUpperCase() === 'K11') { document.getElementById(targetId).value = 3; return; }
             const c = await geocodeAddress(pName);
             if(c) {
                 let r = await fetch(`https://router.project-osrm.org/route/v1/foot/${c.lon},${c.lat};${MTR_GEO[sCode][1]},${MTR_GEO[sCode][0]}`);
@@ -400,37 +388,90 @@
             }
         }
 
+        // 🧠 【核心優化】：使用 BFS 廣度優先算法，支持無限級轉乘（如康城去機場）
         function calculateAutoRoute(sCode, eCode) {
-            if (sCode === eCode) return { type: 0, line1: STA_INDEX[sCode].lines[0], s1: sCode, e1: sCode, ride: 0 };
-            const lA = STA_INDEX[sCode].lines, lB = STA_INDEX[eCode].lines;
-            const directLine = lA.find(l => lB.includes(l));
-            if (directLine) {
-                return { type: 0, line1: directLine, s1: sCode, e1: eCode, ride: Math.abs(MTR_DB[directLine].times[sCode] - MTR_DB[directLine].times[eCode]) || 1 };
+            if (sCode === eCode) {
+                return { segments: [{ line: STA_INDEX[sCode].lines[0], from: sCode, to: sCode, rideTime: 0 }], totalRide: 0 };
             }
-            for (let line1 of lA) {
-                for (let line2 of lB) {
-                    const common = MTR_DB[line1].order.filter(x => MTR_DB[line2].order.includes(x));
-                    if (common.length > 0) {
-                        common.sort((a, b) => (PREF_HUBS.indexOf(a)===-1?99:PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b)===-1?99:PREF_HUBS.indexOf(b)));
-                        let hub = common[0];
-                        let t1 = Math.abs(MTR_DB[line1].times[sCode] - MTR_DB[line1].times[hub]);
-                        let t2 = Math.abs(MTR_DB[line2].times[hub] - MTR_DB[line2].times[eCode]);
-                        return { type: 1, line1: line1, s1: sCode, e1: hub, line2: line2, s2: hub, e2: eCode, ride: t1 + t2 + 3, xName: STA_INDEX[hub].name, tLeg1: t1, tLeg2: t2 };
+
+            // 特殊虛擬轉乘：中環 (CEN) <-> 香港 (HOK)
+            const checkVirtualTransfer = (currCode, nextLine) => {
+                if (currCode === 'CEN' && MTR_DB[nextLine].order.includes('HOK')) return { code: 'HOK', penalty: 3 };
+                if (currCode === 'HOK' && MTR_DB[nextLine].order.includes('CEN')) return { code: 'CEN', penalty: 3 };
+                return null;
+            };
+
+            let queue = [ { currentStation: sCode, path: [], totalTime: 0 } ];
+            let visitedStations = new Set([sCode]);
+
+            while (queue.length > 0) {
+                let curr = queue.shift();
+                let currLines = STA_INDEX[curr.currentStation].lines;
+
+                for (let line of currLines) {
+                    let order = MTR_DB[line].order;
+                    let targetLines = STA_INDEX[eCode].lines;
+
+                    // 1. 如果同線直達
+                    if (targetLines.includes(line)) {
+                        let t1 = MTR_DB[line].times[curr.currentStation];
+                        let t2 = MTR_DB[line].times[eCode];
+                        let ride = Math.abs(t1 - t2);
+                        let finalPath = [...curr.path, { line: line, from: curr.currentStation, to: eCode, rideTime: ride }];
+                        return { segments: finalPath, totalRide: curr.totalTime + ride };
+                    }
+
+                    // 2. 搜尋潛在轉乘站
+                    for (let possibleHub of order) {
+                        if (possibleHub === curr.currentStation) continue;
+                        
+                        let nextLines = STA_INDEX[possibleHub].lines;
+                        for (let nLine of nextLines) {
+                            if (nLine === line) continue;
+
+                            if (!visitedStations.has(possibleHub)) {
+                                visitedStations.add(possibleHub);
+                                let t1 = MTR_DB[line].times[curr.currentStation];
+                                let tHub = MTR_DB[line].times[possibleHub];
+                                let ride = Math.abs(t1 - tHub);
+                                
+                                queue.push({
+                                    currentStation: possibleHub,
+                                    path: [...curr.path, { line: line, from: curr.currentStation, to: possibleHub, rideTime: ride }],
+                                    totalTime: curr.totalTime + ride + 3 // 3分鐘轉乘懲罰
+                                });
+                            }
+                        }
                     }
                 }
+
+                // 3. 處理中環/香港的站外步行轉乘特例
+                let vTrans = null;
+                if (curr.currentStation === 'CEN') vTrans = { code: 'HOK', penalty: 4 };
+                if (curr.currentStation === 'HOK') vTrans = { code: 'CEN', penalty: 4 };
+                if (vTrans && !visitedStations.has(vTrans.code)) {
+                    visitedStations.add(vTrans.code);
+                    queue.push({
+                        currentStation: vTrans.code,
+                        path: [...curr.path, { line: 'WALK', from: curr.currentStation, to: vTrans.code, rideTime: vTrans.penalty, isVirtual: true }],
+                        totalTime: curr.totalTime + vTrans.penalty
+                    });
+                }
             }
-            return { type: 0, line1: lA[0], s1: sCode, e1: sCode, ride: 15 };
+
+            return { segments: [{ line: STA_INDEX[sCode].lines[0], from: sCode, to: sCode, rideTime: 15 }], totalRide: 15 };
         }
 
         const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 3, destName: 'K11' };
         let curCfg = JSON.parse(localStorage.getItem('my_commute_v14_dynamic_interchange')) || DEF_CFG;
         let activeRoute = null; let isSprintOpen = false;
 
-        // 🟢 🛠️ 【核心復位】：完美重組丟失的抽屜切換功能，消除 Console 報錯
         function toggleSprintDrawer() {
             isSprintOpen = !isSprintOpen;
-            document.getElementById('sprint-drawer-box')?.classList.toggle('open', isSprintOpen);
-            document.getElementById('sprint-arrow-icon').innerText = isSprintOpen ? '▲' : '▼';
+            const drawer = document.getElementById('sprint-drawer-box');
+            if (drawer) drawer.classList.toggle('open', isSprintOpen);
+            const icon = document.getElementById('sprint-arrow-icon');
+            if (icon) icon.innerText = isSprintOpen ? '▲' : '▼';
         }
 
         function initApp() {
@@ -441,48 +482,71 @@
             activeRoute = calculateAutoRoute(curCfg.sCode, curCfg.eCode);
             document.getElementById('main-title').innerText = `🏢 ${curCfg.startName} ➔ ${curCfg.destName}`;
             document.getElementById('label-walk-speed').innerText = `${curCfg.walk1}分鐘步速`;
-            document.getElementById('main-card').style.borderTop = `3.5px solid ${MTR_DB[activeRoute.line1].color}`;
+            const firstLine = activeRoute.segments[0].line;
+            document.getElementById('main-card').style.borderTop = `3.5px solid ${MTR_DB[firstLine] ? MTR_DB[firstLine].color : '#38bdf8'}`;
         }
 
         async function fetchMTR() {
-            if (!activeRoute) return;
+            if (!activeRoute || !activeRoute.segments.length) return;
             const currentW = parseInt(document.getElementById('cfg-walk1').value) || curCfg.walk1;
-            const l1 = activeRoute.line1, s1 = activeRoute.s1, e1 = activeRoute.e1;
-            const dir1 = MTR_DB[l1].order.indexOf(s1) < MTR_DB[l1].order.indexOf(e1) ? 'UP' : 'DOWN';
-            const u1 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l1}&sta=${s1}`;
-            let u2 = null, dir2 = null, l2 = null, s2 = null;
-            if (activeRoute.type === 1) {
-                l2 = activeRoute.line2; s2 = activeRoute.s2;
-                dir2 = MTR_DB[l2].order.indexOf(s2) < MTR_DB[l2].order.indexOf(activeRoute.e2) ? 'UP' : 'DOWN';
-                u2 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l2}&sta=${s2}`;
-            }
+            
+            // 多綫實時連線：動態請求路綫陣列中所有真實鐵路綫的實時動態
             try {
-                const reqs = [fetch(u1)]; if(u2) reqs.push(fetch(u2));
-                const res = await Promise.all(reqs);
-                const d1 = await res[0].json(); const d2 = u2 ? await res[1].json() : null;
-                renderDashboard(d1.data[`${l1}-${s1}`][dir1]||[], d2 ? d2.data[`${l2}-${s2}`][dir2]||[] : null, currentW);
+                let reqs = [];
+                let checkedKeys = new Set();
+                
+                activeRoute.segments.forEach(seg => {
+                    if (seg.line !== 'WALK') {
+                        let key = `${seg.line}-${seg.from}`;
+                        if (!checkedKeys.has(key)) {
+                            checkedKeys.add(key);
+                            let dir = MTR_DB[seg.line].order.indexOf(seg.from) < MTR_DB[seg.line].order.indexOf(seg.to) ? 'UP' : 'DOWN';
+                            let url = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${seg.line}&sta=${seg.from}`;
+                            reqs.push({ line: seg.line, sta: seg.from, dir: dir, fetchPromise: fetch(url).then(r => r.json()).catch(()=>null) });
+                        }
+                    }
+                });
+
+                const results = await Promise.all(reqs.map(r => r.fetchPromise));
+                let liveDataMap = {};
+                reqs.forEach((req, index) => {
+                    if (results[index] && results[index].data) {
+                        let resKey = `${req.line}-${req.sta}`;
+                        liveDataMap[resKey] = results[index].data[resKey] ? results[index].data[resKey][req.dir] || [] : [];
+                    }
+                });
+
+                renderDashboard(liveDataMap, currentW);
             } catch (err) {}
         }
 
-        function renderDashboard(t1, t2, dynamicW) {
+        function renderDashboard(liveDataMap, dynamicW) {
             const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), now = new Date();
             const W = dynamicW;
-            const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
-            let showWalk = walkTrains.slice(0, 2); let isMid = !walkTrains.length && !sprintTrains.length;
+            
+            let firstSeg = activeRoute.segments[0];
+            let firstKey = `${firstSeg.line}-${firstSeg.from}`;
+            let firstTrainData = liveDataMap[firstKey] || [];
 
-            let lineTitle = activeRoute.type === 0 ? `直達路綫：${MTR_DB[activeRoute.line1].name}` : `第一程：${MTR_DB[activeRoute.line1].name}`;
-            let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 ${lineTitle} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
+            const sprintTrains = firstTrainData.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = firstTrainData.filter(t => parseInt(t.ttnt) >= W);
+            let showWalk = walkTrains.slice(0, 2); let isMid = !walkTrains.length && !sprintTrains.length && !firstTrainData.length;
+
+            let html = '';
+
+            // 1. 生成第一程或直達車
+            let firstLineTitle = activeRoute.segments.length === 1 ? `直達路綫：${MTR_DB[firstSeg.line].name}` : `第一程：${MTR_DB[firstSeg.line].name}`;
+            html += `<div class="route-sub-title" style="color:${MTR_DB[firstSeg.line].color}">🚇 ${firstLineTitle} (${STA_INDEX[firstSeg.from].name}站出發)</div>`;
 
             if (sprintTrains.length > 0) {
                 html += `<div class="sprint-capsule" onclick="toggleSprintDrawer()"><span>💡 已收起 ${sprintTrains.length} 班狂奔列車</span><b id="sprint-arrow-icon">${isSprintOpen ? '▲' : '▼'}</b></div><div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
                 sprintTrains.forEach(t => {
-                    let sm = parseInt(t.ttnt), hypDest = new Date(now.getTime() + (sm + activeRoute.ride + curCfg.walk2) * 60000);
+                    let sm = parseInt(t.ttnt), hypDest = new Date(now.getTime() + (sm + activeRoute.totalRide + curCfg.walk2) * 60000);
                     html += `<div class="sprint-card-item"><div><span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span><div style="font-size:0.72rem; color:#94a3b8;">衝到 ➔ <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div></div><span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span></div>`;
                 });
                 html += `</div>`;
             }
 
-            if (showWalk.length === 0 && !isMid) {
+            if (showWalk.length === 0 && !isMid && firstSeg.line !== 'WALK') {
                 html += `<div class="train" style="border: 1px dashed rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.03);">
                             <span class="train-label" style="color:var(--warning); font-size:0.82rem; font-weight:600;">🐢 正常步速已無趕得切嘅車次</span>
                             <span class="train-time urgent" style="font-size:0.88rem; font-weight:700; color:#fbbf24;">請點開上方狂奔區 🏃‍♂️</span>
@@ -494,54 +558,69 @@
                 html += `<div class="${i===0 ?'train next-train':'train'}"><span class="train-label">${i===0?'🚶‍♂️ 正常步速（首選）':'🛡️ 次班備用'}</span><span class="train-time ${(m===W||m===W+1)?'urgent':''}">${isNaN(m)?"抵達中":m+" 分鐘"}</span></div>`;
             });
 
-            if (activeRoute.type === 1 && t2?.length) {
-                html += `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line2].color}">🔄 接駁：${MTR_DB[activeRoute.line2].name} (${activeRoute.xName}站轉乘)</div>`;
-                t2.slice(0,2).forEach((t, i) => { html += `<div class="train"><span class="train-label">${i===0?'⚡ 預計接駁':'🛡️ 次班接駁'}</span><span class="train-time" style="color:#38bdf8">${isNaN(parseInt(t.ttnt))?"抵達中":t.ttnt+" 分鐘"}</span></div>`; });
+            // 2. 循環生成後續所有轉乘點（支援無限級轉乘）
+            for(let k = 1; k < activeRoute.segments.length; k++) {
+                let seg = activeRoute.segments[k];
+                if(seg.line === 'WALK') {
+                    html += `<div class="route-sub-title" style="color:#64748b">🚶‍♂️ 站外轉乘：經行人隧道步行往 ${STA_INDEX[seg.to].name}</div>`;
+                } else {
+                    html += `<div class="route-sub-title" style="color:${MTR_DB[seg.line].color}">🔄 接駁：${MTR_DB[seg.line].name} (${STA_INDEX[seg.from].name}站轉乘)</div>`;
+                    let nextTrainData = liveDataMap[`${seg.line}-${seg.from}`] || [];
+                    if(nextTrainData.length) {
+                        nextTrainData.slice(0,2).forEach((t, i) => { 
+                            html += `<div class="train"><span class="train-label">${i===0?'⚡ 預計接駁':'🛡️ 次班接駁'}</span><span class="train-time" style="color:#38bdf8">${isNaN(parseInt(t.ttnt))?"抵達中":t.ttnt+" 分鐘"}</span></div>`; 
+                        });
+                    } else {
+                        html += `<div class="train"><span class="train-label">⏳ 班次班距</span><span class="train-time" style="color:#64748b">約 4-7 分鐘</span></div>`;
+                    }
+                }
             }
             listHtml.innerHTML = html;
 
+            // 3. 計算動態時間軸線
             let tMins = 0; let finalTargetTrain = null;
             if (showWalk.length > 0) { finalTargetTrain = showWalk[0]; tMins = parseInt(finalTargetTrain.ttnt) || 0; } 
             else {
-                let absoluteNext = t1.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= W);
+                let absoluteNext = firstTrainData.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= W);
                 if (absoluteNext) { finalTargetTrain = absoluteNext; tMins = parseInt(absoluteNext.ttnt); } 
-                else { let backup = t1.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= 0); tMins = backup ? Math.max(W, parseInt(backup.ttnt)) : W; }
+                else { let backup = firstTrainData.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= 0); tMins = backup ? Math.max(W, parseInt(backup.ttnt)) : W; }
             }
 
-            let tBoard = new Date(now.getTime() + tMins * 60000);
+            let tTimelineTracker = new Date(now.getTime() + tMins * 60000);
             let tlContainer = document.getElementById('dynamic-timeline-box');
-            let tlHtml = '';
+            
+            let tlHtml = `<div class="step"><span>🚶‍♂️</span><div class="loc-name">${curCfg.startName}</div><b>${fmtT(now)}</b></div>`;
+            tlHtml += `<div class="arrow-box"><span class="arrow-time">+${curCfg.walk1}分</span>➔</div>`;
+            
+            activeRoute.segments.forEach((seg, idx) => {
+                if (idx === 0) {
+                    tlHtml += `<div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[seg.from].name}站</div><b>${fmtT(tTimelineTracker)}</b></div>`;
+                }
+                
+                tTimelineTracker = new Date(tTimelineTracker.getTime() + seg.rideTime * 60000);
+                
+                if (idx < activeRoute.segments.length - 1) {
+                    let nextSeg = activeRoute.segments[idx+1];
+                    let label = nextSeg.line === 'WALK' ? '站外轉' : `轉${MTR_DB[nextSeg.line].name.replace('綫','')}`;
+                    tlHtml += `<div class="arrow-box"><span class="arrow-time">+${seg.rideTime}分</span>➔</div>`;
+                    tlHtml += `<div class="step"><span>🔄</span><div class="loc-name" style="color:#38bdf8">${STA_INDEX[seg.to].name}站</div><b style="color:#38bdf8">${fmtT(tTimelineTracker)}</b><em class="sub-transfer">${label}</em></div>`;
+                    tTimelineTracker = new Date(tTimelineTracker.getTime() + 3 * 60000); // 緩衝加3分
+                    tlHtml += `<div class="arrow-box"><span class="arrow-time">+3分</span>➔</div>`;
+                } else {
+                    tlHtml += `<div class="arrow-box"><span class="arrow-time">+${seg.rideTime}分</span>➔</div>`;
+                    tlHtml += `<div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[seg.to].name}站</div><b>${fmtT(tTimelineTracker)}</b></div>`;
+                }
+            });
 
-            if (activeRoute.type === 0) {
-                let tAlight = new Date(tBoard.getTime() + activeRoute.ride * 60000);
-                let tDest = new Date(tAlight.getTime() + curCfg.walk2 * 60000);
-                tlHtml = `
-                <div class="step"><span>🚶‍♂️</span><div class="loc-name">${curCfg.startName}</div><b>${fmtT(now)}</b></div>
-                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk1}分</span>➔</div>
-                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.sCode].name}站</div><b>${fmtT(tBoard)}</b></div>
-                <div class="arrow-box"><span class="arrow-time">+${activeRoute.ride}分</span>➔</div>
-                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.eCode].name}站</div><b>${fmtT(tAlight)}</b></div>
-                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk2}分</span>➔</div>
-                <div class="step"><span>🏁</span><div class="loc-name">${curCfg.destName}</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
-                document.getElementById('total-duration').innerText = `共 ${Math.round((tDest - now)/60000)} 分鐘`; document.getElementById('arrive-clock').innerText = fmtC(tDest);
-            } else {
-                let tHub = new Date(tBoard.getTime() + activeRoute.tLeg1 * 60000);
-                let tAlight = new Date(tHub.getTime() + (3 + activeRoute.tLeg2) * 60000);
-                let tDest = new Date(tAlight.getTime() + curCfg.walk2 * 60000);
-                tlHtml = `
-                <div class="step"><span>🚶‍♂️</span><div class="loc-name">${curCfg.startName}</div><b>${fmtT(now)}</b></div>
-                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk1}分</span>➔</div>
-                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.sCode].name}站</div><b>${fmtT(tBoard)}</b></div>
-                <div class="arrow-box"><span class="arrow-time">+${activeRoute.tLeg1}分</span>➔</div>
-                <div class="step"><span>🔄</span><div class="loc-name" style="color:#38bdf8">${activeRoute.xName}站</div><b style="color:#38bdf8">${fmtT(tHub)}</b><em class="sub-transfer">轉${MTR_DB[activeRoute.line2].name.replace('綫','')}</em></div>
-                <div class="arrow-box"><span class="arrow-time">+${3+activeRoute.tLeg2}分</span>➔</div>
-                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.eCode].name}站</div><b>${fmtT(tAlight)}</b></div>
-                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk2}分</span>➔</div>
-                <div class="step"><span>🏁</span><div class="loc-name">${curCfg.destName}</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
-                document.getElementById('total-duration').innerText = `共 ${Math.round((tDest - now)/60000)} 分鐘`; document.getElementById('arrive-clock').innerText = fmtC(tDest);
-            }
+            let tDest = new Date(tTimelineTracker.getTime() + curCfg.walk2 * 60000);
+            tlHtml += `<div class="arrow-box"><span class="arrow-time">+${curCfg.walk2}分</span>➔</div>`;
+            tlHtml += `<div class="step"><span>🏁</span><div class="loc-name">${curCfg.destName}</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
+            
             tlContainer.innerHTML = tlHtml;
+            document.getElementById('total-duration').innerText = `共 ${Math.round((tDest - now)/60000)} 分鐘`; 
+            document.getElementById('arrive-clock').innerText = fmtC(tDest);
 
+            // 4. 控制情緒看版
             eBox.style.display = 'block';
             let nowTimeFmt = fmtT(now);
             document.getElementById('update-time').innerText = `最後同步: ${nowTimeFmt}`;
@@ -553,7 +632,6 @@
                 if (sprintTrains.length > 0) {
                     let latestSprintMins = parseInt(sprintTrains[sprintTrains.length - 1].ttnt);
                     let runLimit = W - 2;
-
                     if (latestSprintMins < runLimit) {
                         let waitMins = finalTargetTrain ? (parseInt(finalTargetTrain.ttnt) - W) : 3;
                         eBox.className = 'emotion-box mood-chill';
