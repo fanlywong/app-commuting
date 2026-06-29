@@ -13,7 +13,7 @@
     <style>
         :root {
             --bg-color: #090d16; --card-bg: #111827; --text-main: #f8fafc; --text-sub: #64748b;
-            --ktl-green: #00A84D; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --clock-gold: #fbbf24;
+            --ktl-green: #00A84D; --twl-red: #E2231A; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --clock-gold: #fbbf24;
         }
         body { background: var(--bg-color); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; margin: 0; padding: 14px; box-sizing: border-box; }
         
@@ -58,14 +58,14 @@
         .timeline { display: flex; justify-content: space-between; align-items: flex-start; background: #090d16; padding: 14px 2px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.03);}
         .step { text-align: center; flex: 1; min-width: 0; font-size: 0.72rem; color: var(--text-sub); overflow: hidden;}
         .step span { display: block; font-size: 1.1rem; margin-bottom: 2px; }
-        .step .loc-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1; margin-top: 2px;}
-        .step b { display: block; font-size: 0.9rem; color: #38bdf8; margin-top: 3px; font-weight: 700;}
-        .step b.dest-time { color: var(--clock-gold); font-size: 1rem; }
+        .step .loc-name { display: block; font-size: 0.65rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1; margin-top: 2px;}
+        .step b { display: block; font-size: 0.82rem; color: #38bdf8; margin-top: 2px; font-weight: 700;}
+        .step b.dest-time { color: var(--clock-gold); font-size: 0.92rem; }
         
         .sub-transfer { display: block; font-size: 0.55rem; color: #f43f5e; font-style: normal; margin-top: 1px; white-space: nowrap; letter-spacing: -0.3px;}
 
         .arrow-box { display: flex; flex-direction: column; align-items: center; width: 22px; flex-shrink: 0; margin-top: 4px;}
-        .arrow-time { font-size: 0.65rem; color: #64748b; background: #111827; padding: 1px 3px; border-radius: 3px; font-weight: bold;}
+        .arrow-time { font-size: 0.58rem; color: #64748b; background: #111827; padding: 1px 3px; border-radius: 3px; font-weight: bold;}
         
         .section-title { font-size: 0.98rem; font-weight: 700; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
         .route-sub-title { font-size: 0.82rem; color: #38bdf8; margin: 12px 0 5px 0; font-weight: 700; display: flex; align-items: center; gap: 5px;}
@@ -77,8 +77,8 @@
 
         .sprint-card-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #1e293b50; border: 1px solid #ef444430; border-radius: 10px; }
 
-        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 12px 14px; background: #0f172a80; border-radius: 10px; border: 1px solid #33415550;}
-        .train.next-train { background: rgba(16, 185, 129, 0.06); border-left: 4px solid var(--success); }
+        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 10px 12px; background: #090d1680; border-radius: 10px; border: 1px solid #33415540;}
+        .train.next-train { background: rgba(16, 185, 129, 0.06); border-left: 3.5px solid var(--success); }
         .train-time { font-size: 1.5rem; font-weight: 800; color: var(--success); }
         .train-time.urgent { color: var(--warning); }
         .train-time.too-late { color: var(--danger); }
@@ -169,7 +169,7 @@
         const MTR_DB = {
             'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石礤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }},
             'TWL': { name: '荃灣綫', color: '#E2231A', order: ['CEN','ADM','TST','JOR','YMT','MOK','PRE','SSP','CSW','LCK','MEF','LAK','KWF','TWH','TSW'], times: { CEN:0, ADM:3, TST:6, JOR:8, YMT:10, MOK:12, PRE:14, SSP:16, CSW:18, LCK:20, MEF:22, LAK:26, KWF:29, TWH:31, TSW:34 }, names: { CEN:'中環', ADM:'金鐘', TST:'尖沙咀', JOR:'佐敦', YMT:'油麻地', MOK:'旺角', PRE:'太子', SSP:'深水埗', CSW:'長沙灣', LCK:'荔枝角', MEF:'美孚', LAK:'荔景', KWF:'葵芳', TWH:'葵興', TSW:'荃灣' }},
-            'ISL': { name: '港島綫', color: '#007FFF', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWH','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲箕灣', HFC:'杏花邨', CHW:'柴灣' }}
+            'ISL': { name: '港島綫', color: '#007FFF', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWH','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲紀灣', HFC:'杏花邨', CHW:'柴灣' }}
         };
 
         const PREF_HUBS = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
@@ -404,6 +404,10 @@
 
         async function fetchMTR() {
             if (!activeRoute) return;
+            // 🛑 【修正核心 3：同步拉取最新值】
+            // 每次政府開放數據刷新時，必須動態讀取當前最新設定嘅 W 步速，阻斷「文字停留在過去」嘅死鎖狀態！
+            const currentW = parseInt(document.getElementById('cfg-walk1').value) || curCfg.walk1;
+            
             const l1 = activeRoute.line1, s1 = activeRoute.s1, e1 = activeRoute.e1;
             const dir1 = MTR_DB[l1].order.indexOf(s1) < MTR_DB[l1].order.indexOf(e1) ? 'UP' : 'DOWN';
             const u1 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l1}&sta=${s1}`;
@@ -417,13 +421,15 @@
                 const reqs = [fetch(u1)]; if(u2) reqs.push(fetch(u2));
                 const res = await Promise.all(reqs);
                 const d1 = await res[0].json(); const d2 = u2 ? await res[1].json() : null;
-                renderDashboard(d1.data[`${l1}-${s1}`][dir1]||[], d2 ? d2.data[`${l2}-${s2}`][dir2]||[] : null);
+                renderDashboard(d1.data[`${l1}-${s1}`][dir1]||[], d2 ? d2.data[`${l2}-${s2}`][dir2]||[] : null, currentW);
             } catch (err) {}
-            let now = new Date(); document.getElementById('update-time').innerText = `最後同步: ${fmtT(now)}`;
         }
 
-        function renderDashboard(t1, t2) {
-            const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), W = curCfg.walk1, now = new Date();
+        // 🧠 核心重寫：動態極限比對器
+        function renderDashboard(t1, t2, dynamicW) {
+            const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), now = new Date();
+            const W = dynamicW; // 完全聽從當前活動步速
+            
             const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
             
             let showWalk = walkTrains.slice(0, 2);
@@ -459,6 +465,7 @@
             }
             listHtml.innerHTML = html;
 
+            // 🎯 防時空穿越時鐘錨定點
             let tMins = 0;
             let finalTargetTrain = null;
 
@@ -519,27 +526,30 @@
             }
             tlContainer.innerHTML = tlHtml;
 
-            // 🎯 智能解鎖：零 Hard-code、動態加速對齊 [W-2, W) 極限區間
+            // 🟢 🛠️ 【真正零 Hard-code、對齊最遲車、拒絕穿越】嘅打工仔理性提示大腦
             eBox.style.display = 'block';
+            let nowTimeFmt = fmtT(now);
+            document.getElementById('update-time').innerText = `最後同步: ${nowTimeFmt}`;
 
             if (isMid) {
                 eBox.className = 'emotion-box mood-giveup';
                 eBox.innerHTML = `🚨 鐵路網絡已接近尾班車，完全無車可搭！請立刻截的士！`;
             } else if (showWalk.length === 0) {
-                // 狀況一：正常行（W 分鐘）會送車尾，月台暫時冇安全班次
+                // ➔ 狀況 A：正常行（W 分鐘）已經趕唔切最近班次
                 if (sprintTrains.length > 0) {
-                    let earliestSprintMins = parseInt(sprintTrains[0].ttnt);
-                    let runLimit = W - 2; // 動態算出爆發力極限
+                    // 🛑 【修正核心 1：鎖定最後希望】── 拿清單最底、最遲到站果班狂奔車！
+                    let latestSprintMins = parseInt(sprintTrains[sprintTrains.length - 1].ttnt);
+                    let runLimit = W - 2; // 人類爆發極限（e.g., 10 - 2 = 8分鐘）
 
-                    if (earliestSprintMins < runLimit) {
-                        // 🚨 【理性勸退】：時間小於極限，點跑都追唔到
+                    if (latestSprintMins < runLimit) {
+                        // 🛑 【修正核心 2：理性勸退】── 連最遲果班都細過極限（例：最遲得7分），判定點跑都衝唔到！
                         let waitMins = finalTargetTrain ? (parseInt(finalTargetTrain.ttnt) - W) : 3;
                         eBox.className = 'emotion-box mood-chill';
-                        eBox.innerHTML = `🐢 慢慢嚟啦！最近嗰班車得返 ${earliestSprintMins} 分鐘，行要 ${W} 分鐘，點跑都衝唔到啦！正常行過去啦，預計到月台等多 ${waitMins} 分鐘坐下一班穩陣車。`;
+                        eBox.innerHTML = `🐢 慢慢嚟啦！最遲嗰班狂奔車都得返 ${latestSprintMins} 分鐘，行要 ${W} 分鐘，點跑都衝唔到啦！正常行過去啦，預計到月台等多 ${waitMins} 分鐘坐下一班穩陣車。`;
                     } else {
-                        // ⚡ 【真正搏盡模式】：時間剛好落在可追範圍
+                        // ⚡ 【真正搏盡模式】── 最遲果班剛好落在 [W-2, W) 區間（例：最遲果班係8或9分鐘），即刻跑有得救！
                         eBox.className = 'emotion-box mood-run';
-                        eBox.innerHTML = `⚡ <b>搏盡模式！</b> 最近班次喺 ${earliestSprintMins} 分鐘後。正常行（${W}分）會送車尾，但如果你<b>依家即刻跑</b>減 2 分鐘，有望衝到！唔跑就要等多班。`;
+                        eBox.innerHTML = `⚡ <b>搏盡模式！</b> 狂奔區最遲班次喺 ${latestSprintMins} 分鐘後。正常行（${W}分）會送車尾，但如果你<b>依家即刻跑</b>減 2 分鐘，有望衝到！唔跑就要等多班。`;
                     }
                 } else {
                     let waitMins = finalTargetTrain ? (parseInt(finalTargetTrain.ttnt) - W) : 3;
@@ -547,7 +557,7 @@
                     eBox.innerHTML = `⏳ 正常步速啱啱送車尾。行過去月台後，預計只需等多 ${waitMins} 分鐘就有下一班穩陣車，慢慢行即可。`;
                 }
             } else {
-                // 狀況二：正常步速大把時間
+                // ➔ 狀況 B：正常步速大把時間
                 if (tMins === W || tMins === W + 1) {
                     eBox.className = 'emotion-box mood-run';
                     eBox.innerHTML = `🔥 <b>黃金出門一刻！</b> 正常首選班次將於 ${tMins} 分鐘後到站，你行過去需時 ${W} 分鐘，依家出發啱啱好！`;
