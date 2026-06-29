@@ -231,7 +231,7 @@
             return { type: 0, line1: lA[0], s1: sCode, e1: sCode, ride: 15 };
         }
 
-        const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: '形品星寓' };
+        const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: 'K11' };
         let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v4')) || DEF_CFG;
         let activeRoute = null;
         let isSprintOpen = false; // 記憶摺疊卡狀態
