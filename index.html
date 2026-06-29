@@ -1,88 +1,58 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-     <meta name="theme-color" content="#0f172a">
-     <link rel="icon" type="image/png" href="logo2.png">
-     <link rel="apple-touch-icon" href="logo2.png">
-     <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>專屬通勤管家</title>
+    
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/png" href="app-icon.png">
+    <link rel="apple-touch-icon" href="app-icon.png">
+    <link rel="manifest" href="manifest.json">
+
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --ktl-green: #00A84D;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --clock-gold: #fbbf24;
-            --input-bg: #334155;
+            --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-sub: #94a3b8;
+            --ktl-green: #00A84D; --twl-red: #E2231A; --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --clock-gold: #fbbf24; --input-bg: #334155;
         }
-        body { 
-            background: var(--bg-color); color: var(--text-main); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            margin: 0; padding: 15px; box-sizing: border-box;
-        }
-        
+        body { background: var(--bg-color); color: var(--text-main); font-family: -apple-system, Roboto, sans-serif; margin: 0; padding: 15px; box-sizing: border-box; }
         .header-container { display: flex; justify-content: space-between; align-items: center; margin: 5px 0 15px 0; }
         h1 { font-size: 1.3rem; margin: 0; letter-spacing: 1px; color: #f1f5f9; }
-        .btn-config { background: #334155; color: #e2e8f0; border: none; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+        .btn-config { background: #334155; color: #e2e8f0; border: none; padding: 8px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        .card { background: var(--card-bg); padding: 18px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); border-top: 4px solid var(--ktl-green); transition: border-color 0.3s;}
         
-        .card { 
-            background: var(--card-bg); padding: 18px; border-radius: 16px; 
-            margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); 
-            border-top: 4px solid var(--ktl-green); transition: all 0.3s ease;
-        }
-
         #config-panel { display: none; border-top: 4px solid #38bdf8; font-size: 0.9rem;}
         .cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .cfg-full { grid-column: span 2; }
         .cfg-group { display: flex; flex-direction: column; gap: 4px; }
         .cfg-group label { font-size: 0.75rem; color: var(--text-sub); font-weight: bold;}
-        .cfg-group input, .cfg-group select { background: var(--input-bg); border: 1px solid #475569; color: white; padding: 8px 10px; border-radius: 8px; font-size: 0.9rem; outline: none; width: 100%; box-sizing: border-box;}
+        .cfg-group input, .cfg-group select { background: var(--input-bg); border: 1px solid #475569; color: white; padding: 10px; border-radius: 8px; font-size: 0.95rem; outline: none; width:100%; box-sizing:border-box;}
         
-        input:disabled { background: #1e293b !important; color: #38bdf8 !important; border-color: #334155 !important; font-weight: bold;}
-
         .input-with-btn { display: flex; gap: 6px; }
-        .btn-walk-api { background: #0284c7; color: white; border: none; padding: 0 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; transition: background 0.2s; flex-shrink:0;}
-        .btn-walk-api:hover { background: #0369a1; }
-        .btn-walk-api:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
-
+        .btn-walk-api { background: #0284c7; color: white; border: none; padding: 0 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; flex-shrink:0;}
+        
         .cfg-actions { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-save { flex: 2; background: #059669; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer;}
+        .btn-save { flex: 2; background: #059669; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size:1rem;}
         .btn-cancel { flex: 1; background: transparent; border: 1px solid #64748b; color: #94a3b8; border-radius: 10px; cursor: pointer;}
 
         .timeline { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 15px 4px; border-radius: 12px; margin-top: 10px; }
-        .step { text-align: center; flex: 1; font-size: 0.75rem; color: var(--text-sub); overflow: hidden; min-width: 0;}
+        .step { text-align: center; flex: 1; font-size: 0.75rem; color: var(--text-sub); overflow: hidden;}
         .step span { display: block; font-size: 1.2rem; margin-bottom: 4px; }
-        .step .loc-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; margin-bottom: 2px;}
+        .step .loc-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
         .step b { display: block; font-size: 0.95rem; color: #38bdf8; margin-top: 4px; font-weight: 600;}
         .step b.dest-time { color: var(--clock-gold); font-size: 1.05rem; }
-        
-        .arrow-box { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 32px; flex-shrink: 0;}
-        .arrow-time { font-size: 0.65rem; color: #64748b; background: #1e293b; padding: 1px 4px; border-radius: 4px; margin-bottom: 2px; font-weight: bold; white-space: nowrap;}
-        .arrow-icon { color: #334155; font-weight: bold; font-size: 0.8rem;}
+        .arrow-box { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0;}
+        .arrow-time { font-size: 0.65rem; color: #64748b; background: #1e293b; padding: 1px 4px; border-radius: 4px; font-weight: bold;}
         
         .section-title { font-size: 1.1rem; font-weight: bold; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
-        
-        /* 可點擊展開的 Badge 樣式 */
-        .filter-badge { font-size: 0.78rem; color: #fbbf24; background: #fbbf2415; padding: 6px 12px; border-radius: 20px; margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; border: 1px solid #fbbf2430; transition: all 0.2s;}
-        .filter-badge:hover { background: #fbbf2425; }
-        
-        /* 被隱藏列車的專屬半透明列樣式 */
-        .hidden-train-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #ef444408; border: 1px dashed #ef444440; border-radius: 8px; margin-top: 6px; opacity: 0.75;}
-        .hidden-train-time { font-size: 1.4rem; font-weight: bold; color: #f87171; }
-        .hidden-train-label { font-size: 0.85rem; color: #fCA5A5; display: flex; align-items: center; gap: 4px;}
+        .route-sub-title { font-size: 0.85rem; color: #38bdf8; margin: 12px 0 4px 0; font-weight: bold; display: flex; align-items: center; gap: 6px;}
 
-        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 14px 12px; background: #0f172a80; border-radius: 10px; border: 1px solid #33415550;}
+        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 10px 12px; background: #0f172a80; border-radius: 10px; border: 1px solid #33415550;}
         .train.next-train { background: #10b98115; border-left: 4px solid var(--success); }
-        .train-time { font-size: 2.1rem; font-weight: 800; color: var(--success); }
+        .train-time { font-size: 1.6rem; font-weight: 800; color: var(--success); }
         .train-time.urgent { color: var(--warning); }
         .train-time.too-late { color: var(--danger); }
-        .train-label { font-size: 0.95rem; color: var(--text-sub); font-weight: 500;}
+        .train-label { font-size: 0.85rem; color: var(--text-sub); font-weight: 500;}
 
         .clock-dashboard { display: flex; background: #0f172a; border: 1px solid #334155; border-radius: 14px; padding: 15px; margin-top: 15px; align-items: center; }
         .clock-box { flex: 1; text-align: center; }
@@ -92,10 +62,7 @@
         .divider { width: 1px; height: 38px; background: #334155; }
 
         .emotion-box { padding: 14px; border-radius: 12px; text-align: center; font-size: 0.95rem; font-weight: bold; margin-top: 15px; line-height: 1.4; }
-        .mood-chill { background: #10b98120; color: #34d399; border: 1px solid #34d39950; }
-        .mood-run { background: #f59e0b20; color: #fbbf24; border: 1px solid #fbbf2450; }
-        .mood-giveup { background: #ef444420; color: #f87171; border: 1px solid #f8717150; }
-        
+        .mood-chill { background: #10b98120; color: #34d399; } .mood-run { background: #f59e0b20; color: #fbbf24; } .mood-giveup { background: #ef444420; color: #f87171; }
         #update-time { text-align: center; font-size: 0.75rem; color: #64748b; margin-top: 10px; }
     </style>
 </head>
@@ -107,56 +74,45 @@
     </div>
 
     <div id="config-panel" class="card">
-        <div class="section-title" style="color:#38bdf8">🛠️ 自訂通勤路線</div>
+        <div class="section-title" style="color:#38bdf8">🧠 全自動尋路設定</div>
         <div class="cfg-grid">
-            <div class="cfg-group"><label>起點名稱</label><input type="text" id="cfg-start-name"></div>
+            <div class="cfg-group"><label>起點門牌名稱</label><input type="text" id="cfg-start-name"></div>
             <div class="cfg-group">
-                <label>步行至港鐵站 (分鐘)</label>
-                <div class="input-with-btn">
-                    <input type="number" id="cfg-walk1" min="1">
-                    <button type="button" id="btn-api-w1" class="btn-walk-api" onclick="smartCalculateWalk('start')">📍 智能測距</button>
-                </div>
+                <label>步行至港鐵站 (分)</label>
+                <div class="input-with-btn"><input type="number" id="cfg-walk1" min="1"><button type="button" id="btn-api-w1" class="btn-walk-api" onclick="smartWalk('start')">📍 智能測距</button></div>
             </div>
             
-            <div class="cfg-group cfg-full"><label>港鐵路線</label><select id="cfg-line" onchange="onLineChange()"></select></div>
-            <div class="cfg-group"><label>上車車站</label><select id="cfg-sta" onchange="autoCalculateRide()"></select></div>
-            <div class="cfg-group"><label>下車車站</label><select id="cfg-drop-sta" onchange="autoCalculateRide()"></select></div>
+            <div class="cfg-group cfg-full"><label>由邊個港鐵站上車</label><select id="cfg-start-sta"></select></div>
+            <div class="cfg-group cfg-full"><label>去邊個港鐵站落車</label><select id="cfg-end-sta"></select></div>
             
-            <div class="cfg-group"><label>列車方向 (系統判定)</label><input type="text" id="cfg-dir-show" disabled></div>
-            <div class="cfg-group"><label>預計車程 (系統自動計)</label><input type="text" id="cfg-ride" disabled></div>
-            
-            <div class="cfg-group"><label>終點名稱</label><input type="text" id="cfg-dest-name"></div>
+            <div class="cfg-group"><label>終點門牌名稱</label><input type="text" id="cfg-dest-name"></div>
             <div class="cfg-group">
-                <label>出站步行至終點 (分鐘)</label>
-                <div class="input-with-btn">
-                    <input type="number" id="cfg-walk2" min="1">
-                    <button type="button" id="btn-api-w2" class="btn-walk-api" onclick="smartCalculateWalk('dest')">📍 智能測距</button>
-                </div>
+                <label>出站步行至終點 (分)</label>
+                <div class="input-with-btn"><input type="number" id="cfg-walk2" min="1"><button type="button" id="btn-api-w2" class="btn-walk-api" onclick="smartWalk('dest')">📍 智能測距</button></div>
             </div>
         </div>
         <div class="cfg-actions">
             <button class="btn-cancel" onclick="toggleConfig()">取消</button>
-            <button class="btn-save" onclick="saveAndApply()">💾 儲存並重新計算</button>
+            <button class="btn-save" onclick="saveAndApply()">🤖 AI 自動規劃並導航</button>
         </div>
     </div>
 
-    <div class="card">
-        <div class="section-title"><span>📍 預計行程路標</span><span id="label-walk-speed" style="font-size:0.8rem; font-weight:normal; color:#64748b">--分鐘步速</span></div>
+    <div class="card" id="main-card">
+        <div class="section-title"><span>📍 預計行程路標</span><span id="label-walk-speed" style="font-size:0.8rem; color:#64748b">--分鐘步速</span></div>
         <div class="timeline">
             <div class="step"><span>🚶‍♂️</span><div class="loc-name" id="ui-start-name">--</div><b id="t-start">--:--</b></div>
-            <div class="arrow-box"><span class="arrow-time" id="ui-gap1">--分</span><span class="arrow-icon">➔</span></div>
+            <div class="arrow-box"><span class="arrow-time" id="ui-gap1">--分</span>➔</div>
             <div class="step"><span>🚇</span><div class="loc-name" id="ui-board-name">--</div><b id="t-lof">--:--</b></div>
-            <div class="arrow-box"><span class="arrow-time" id="ui-gap2">--分</span><span class="arrow-icon">➔</span></div>
+            <div class="arrow-box"><span class="arrow-time" id="ui-gap2">--分</span>➔</div>
             <div class="step"><span>🚶‍♀️</span><div class="loc-name" id="ui-drop-name">--</div><b id="t-mok">--:--</b></div>
-            <div class="arrow-box"><span class="arrow-time" id="ui-gap3">--分</span><span class="arrow-icon">➔</span></div>
+            <div class="arrow-box"><span class="arrow-time" id="ui-gap3">--分</span>➔</div>
             <div class="step"><span>🏁</span><div class="loc-name" id="ui-dest-name">--</div><b id="t-dest" class="dest-time">--:--</b></div>
         </div>
     </div>
 
     <div class="card">
-        <div class="section-title"><span id="ui-dir-label">往 -- ⬇️</span><span style="color:var(--success); font-size:0.8rem">● 智能過濾中</span></div>
-        <div id="filter-notice-container"></div>
-        <div id="train-list"><div style="text-align:center; padding: 20px; color: #94a3b8;">連線港鐵 API 中...</div></div>
+        <div class="section-title"><span id="ui-dir-label">智能軌道追蹤中 ⬇️</span><span style="color:var(--success); font-size:0.8rem">● AI導航運作中</span></div>
+        <div id="train-list"><div style="text-align:center; padding: 20px; color: #94a3b8;">規劃路徑中...</div></div>
         <div class="clock-dashboard">
             <div class="clock-box"><span class="clock-label">⏳ 由出門起計總耗時</span><span class="clock-val" id="total-duration">-- 分鐘</span></div>
             <div class="divider"></div>
@@ -168,194 +124,205 @@
     <div id="update-time">系統載入中...</div>
 
     <script>
-        const MTR_DB = {
-            'KTL': { name: '觀塘綫', up: '往調景嶺', down: '往黃埔', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石硤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }},
-            'TWL': { name: '荃灣綫', up: '往荃灣', down: '往中環', order: ['CEN','ADM','TST','JOR','YMT','MOK','PRE','SSP','CSW','LCK','MEF','LAK','KWF','TWH','TSW'], times: { CEN:0, ADM:3, TST:6, JOR:8, YMT:10, MOK:12, PRE:14, SSP:16, CSW:18, LCK:20, MEF:22, LAK:26, KWF:29, TWH:31, TSW:34 }, names: { CEN:'中環', ADM:'金鐘', TST:'尖沙咀', JOR:'佐敦', YMT:'油麻地', MOK:'旺角', PRE:'太子', SSP:'深水埗', CSW:'長沙灣', LCK:'荔枝角', MEF:'美孚', LAK:'荔景', KWF:'葵芳', TWH:'葵興', TSW:'荃灣' }},
-            'ISL': { name: '港島綫', up: '往柴灣', down: '往堅尼地城', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWH','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲箕灣', HFC:'杏花邨', CHW:'柴灣' }},
-            'TKL': { name: '將軍澳綫', up: '往寶琳', down: '往北角', order: ['NOP','QUB','YAT','TIK','TKO','HAH','POA'], times: { NOP:0, QUB:2, YAT:6, TIK:9, TKO:11, HAH:13, POA:15 }, names: { NOP:'北角', QUB:'鰂魚涌', YAT:'油塘', TIK:'調景嶺', TKO:'將軍澳', HAH:'坑口', POA:'寶琳' }},
-            'EAL': { name: '東鐵綫', up: '往羅湖', down: '往金鐘', order: ['ADM','EXC','HUH','MKK','KOT','TAW','SHT','FOT','UNI','TAP','TWO','FAN','SHS','LOW'], times: { ADM:0, EXC:2, HUH:5, MKK:8, KOT:11, TAW:16, SHT:19, FOT:22, UNI:27, TAP:33, TWO:36, FAN:41, SHS:44, LOW:48 }, names: { ADM:'金鐘', EXC:'會展', HUH:'紅磡', MKK:'旺角東', KOT:'九龍塘', TAW:'大圍', SHT:'沙田', FOT:'火炭', UNI:'大學', TAP:'大埔墟', TWO:'太和', FAN:'粉嶺', SHS:'上水', LOW:'羅湖' }},
-            'TML': { name: '屯馬綫', up: '往烏溪沙', down: '往屯門', order: ['TUM','SIH','TIS','LOP','YUL','KSR','TWW','MEF','NAC','AUS','ETS','HUH','HOM','TKW','SUW','KAT','DIH','HIK','TAW','CHT','STW','CIO','SHM','TSH','HEO','MOS','WKS'], times: { TUM:0, SIH:3, TIS:6, LOP:9, YUL:11, KSR:15, TWW:21, MEF:26, NAC:29, AUS:33, ETS:36, HUH:39, HOM:41, TKW:43, SUW:45, KAT:47, DIH:49, HIK:53, TAW:56, CHT:58, STW:60, CIO:62, SHM:64, TSH:67, HEO:69, MOS:71, WKS:74 }, names: { TUM:'屯門', SIH:'兆康', TIS:'天水圍', LOP:'朗屏', YUL:'元朗', KSR:'錦上路', TWW:'荃灣西', MEF:'美孚', NAC:'南昌', AUS:'柯士甸', ETS:'尖東', HUH:'紅磡', HOM:'何文田', TKW:'土瓜灣', SUW:'宋皇臺', KAT:'啟德', DIH:'鑽石山', HIK:'顯徑', TAW:'大圍', CHT:'車公廟', STW:'沙田圍', CIO:'第一城', SHM:'石門', TSH:'大水坑', HEO:'恆安', MOS:'馬鞍山', WKS:'烏溪沙' }},
-            'TCL': { name: '東涌綫', up: '往東涌', down: '往香港', order: ['HOK','KOW','OLY','NAC','LAK','TSY','SUN','TUC'], times: { HOK:0, KOW:3, OLY:5, NAC:8, LAK:12, TSY:15, SUN:23, TUC:31 }, names: { HOK:'香港', KOW:'九龍', OLY:'奧運', NAC:'南昌', LAK:'荔景', TSY:'青衣', SUN:'欣澳', TUC:'東涌' }}
-        };
-
-       const DEF_CFG = { startName: '朗豪坊', walk1: 4, line: 'TWL', sta: 'MOK', dropSta: 'TST', dir: 'DOWN', ride: 6, walk2: 5, destName: '海港城' };
-        let curCfg = JSON.parse(localStorage.getItem('my_commute_cfg_v4')) || DEF_CFG;
-        let tempDir = curCfg.dir;
-        
-        // --- 新增：全局展開記憶體 ---
-        let isHiddenListExpanded = false;
-
-        function toggleHiddenTrains() {
-            isHiddenListExpanded = !isHiddenListExpanded;
-            const box = document.getElementById('hidden-trains-box');
-            const arrow = document.getElementById('hidden-arrow');
-            if (box) {
-                box.style.display = isHiddenListExpanded ? 'block' : 'none';
-                arrow.innerText = isHiddenListExpanded ? '▲' : '▼';
-            }
+        if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+            const swCode = `self.addEventListener('fetch', function(e) { e.respondWith(fetch(e.request)); });`;
+            navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], { type: 'application/javascript' })));
         }
 
-        function getMtrMazePenalty(staCode) {
-            const DEEP = ['HKU', 'SYP', 'QUB', 'HOM', 'LAT', 'YAT', 'DIH', 'EXC', 'ADM', 'CEN', 'TST'];
-            const SHALLOW = ['KWT', 'NTK', 'KOB', 'CHH', 'SHS', 'FAN', 'TAP', 'UNI', 'FOT', 'SHT', 'TAW', 'HIK', 'TUM', 'SIH', 'TIS', 'LOP', 'YUL', 'KSR', 'TSW', 'POA', 'HAH', 'TKO', 'TUC'];
-            if (DEEP.includes(staCode)) return 4.5;
-            if (SHALLOW.includes(staCode)) return 1.0;
+        const MTR_DB = {
+            'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石硤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }},
+            'TWL': { name: '荃灣綫', color: '#E2231A', order: ['CEN','ADM','TST','JOR','YMT','MOK','PRE','SSP','CSW','LCK','MEF','LAK','KWF','TWH','TSW'], times: { CEN:0, ADM:3, TST:6, JOR:8, YMT:10, MOK:12, PRE:14, SSP:16, CSW:18, LCK:20, MEF:22, LAK:26, KWF:29, TWH:31, TSW:34 }, names: { CEN:'中環', ADM:'金鐘', TST:'尖沙咀', JOR:'佐敦', YMT:'油麻地', MOK:'旺角', PRE:'太子', SSP:'深水埗', CSW:'長沙灣', LCK:'荔枝角', MEF:'美孚', LAK:'荔景', KWF:'葵芳', TWH:'葵興', TSW:'荃灣' }},
+            'ISL': { name: '港島綫', color: '#007FFF', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWH','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲箕灣', HFC:'杏花邨', CHW:'柴灣' }},
+            'TKL': { name: '將軍澳綫', color: '#A35EB5', order: ['NOP','QUB','YAT','TIK','TKO','HAH','POA'], times: { NOP:0, QUB:2, YAT:6, TIK:9, TKO:11, HAH:13, POA:15 }, names: { NOP:'北角', QUB:'鰂魚涌', YAT:'油塘', TIK:'調景嶺', TKO:'將軍澳', HAH:'坑口', POA:'寶琳' }},
+            'EAL': { name: '東鐵綫', color: '#53B7E8', order: ['ADM','EXC','HUH','MKK','KOT','TAW','SHT','FOT','UNI','TAP','TWO','FAN','SHS','LOW'], times: { ADM:0, EXC:2, HUH:5, MKK:8, KOT:11, TAW:16, SHT:19, FOT:22, UNI:27, TAP:33, TWO:36, FAN:41, SHS:44, LOW:48 }, names: { ADM:'金鐘', EXC:'會展', HUH:'紅磡', MKK:'旺角東', KOT:'九龍塘', TAW:'大圍', SHT:'沙田', FOT:'火炭', UNI:'大學', TAP:'大埔墟', TWO:'太和', FAN:'粉嶺', SHS:'上水', LOW:'羅湖' }},
+            'TML': { name: '屯馬綫', color: '#923011', order: ['TUM','SIH','TIS','LOP','YUL','KSR','TWW','MEF','NAC','AUS','ETS','HUH','HOM','TKW','SUW','KAT','DIH','HIK','TAW','CHT','STW','CIO','SHM','TSH','HEO','MOS','WKS'], times: { TUM:0, SIH:3, TIS:6, LOP:9, YUL:11, KSR:15, TWW:21, MEF:26, NAC:29, AUS:33, ETS:36, HUH:39, HOM:41, TKW:43, SUW:45, KAT:47, DIH:49, HIK:53, TAW:56, CHT:58, STW:60, CIO:62, SHM:64, TSH:67, HEO:69, MOS:71, WKS:74 }, names: { TUM:'屯門', SIH:'兆康', TIS:'天水圍', LOP:'朗屏', YUL:'元朗', KSR:'錦上路', TWW:'荃灣西', MEF:'美孚', NAC:'南昌', AUS:'柯士甸', ETS:'尖東', HUH:'紅磡', HOM:'何文田', TKW:'土瓜灣', SUW:'宋皇臺', KAT:'啟德', DIH:'鑽石山', HIK:'顯徑', TAW:'大圍', CHT:'車公廟', STW:'沙田圍', CIO:'第一城', SHM:'石門', TSH:'大水坑', HEO:'恆安', MOS:'馬鞍山', WKS:'烏溪沙' }},
+            'TCL': { name: '東涌綫', color: '#F38B00', order: ['HOK','KOW','OLY','NAC','LAK','TSY','SUN','TUC'], times: { HOK:0, KOW:3, OLY:5, NAC:8, LAK:12, TSY:15, SUN:23, TUC:31 }, names: { HOK:'香港', KOW:'九龍', OLY:'奧運', NAC:'南昌', LAK:'荔景', TSY:'青衣', SUN:'欣澳', TUC:'東涌' }}
+        };
+
+        const PREF_HUBS = ['MOK','ADM','KOT','DIH','YAT','NOP','TIK','NAC','LAK','MEF','HUH','TAW','CEN'];
+
+        const STA_INDEX = {};
+        for (let l in MTR_DB) {
+            MTR_DB[l].order.forEach(code => {
+                if (!STA_INDEX[code]) STA_INDEX[code] = { name: MTR_DB[l].names[code], lines: [] };
+                STA_INDEX[code].lines.push(l);
+            });
+        }
+
+        function getMazePenalty(code) {
+            if (['HKU','SYP','QUB','HOM','LAT','YAT','DIH','EXC','ADM','CEN','TST'].includes(code)) return 4.5;
+            if (['KWT','NTK','KOB','CHH','SHS','FAN','TAP','UNI','FOT','SHT','TAW'].includes(code)) return 1.0;
             return 3.0;
         }
 
-        function ripGovCoords(obj) {
-            if (!obj || typeof obj !== 'object') return null;
-            if (obj.Latitude && obj.Longitude) return { lat: parseFloat(obj.Latitude), lon: parseFloat(obj.Longitude) };
-            for (let k in obj) { let found = ripGovCoords(obj[k]); if (found) return found; }
-            return null;
-        }
-
-        async function smartGeocode(keyword) {
+        // --- 重新補回被遺忘的 AI 智能腳程引擎 ---
+        async function smartWalk(type) {
+            const sCode = type === 'start' ? document.getElementById('cfg-start-sta').value : document.getElementById('cfg-end-sta').value;
+            const pName = type === 'start' ? document.getElementById('cfg-start-name').value : document.getElementById('cfg-dest-name').value;
+            const targetId = type === 'start' ? 'cfg-walk1' : 'cfg-walk2';
+            const btnId = type === 'start' ? 'btn-api-w1' : 'btn-api-w2';
+            
+            if (!pName) return alert('請填寫地點名稱！');
+            const btn = document.getElementById(btnId); 
+            btn.innerText = "🧠 測算中"; btn.disabled = true;
+            
+            const sName = STA_INDEX[sCode].name + "站";
             try {
-                const r = await fetch(`https://www.als.ogcio.gov.hk/lookup?q=${encodeURIComponent(keyword)}`, { headers: { 'Accept': 'application/json' }});
-                if (r.ok) { const c = ripGovCoords(await r.json()); if (c) return c; }
-            } catch(e) {}
-            try {
-                const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(keyword + ", 香港")}&format=json&limit=1`);
-                if (r.ok) { const d = await r.json(); if (d.length > 0) return { lat: parseFloat(d[0].lat), lon: parseFloat(d[0].lon) }; }
-            } catch(e) {}
-            return null;
-        }
-
-        async function smartCalculateWalk(type) {
-            const line = document.getElementById('cfg-line').value;
-            let pName = type === 'start' ? document.getElementById('cfg-start-name').value : document.getElementById('cfg-dest-name').value;
-            let sCode = type === 'start' ? document.getElementById('cfg-sta').value : document.getElementById('cfg-drop-sta').value;
-            let inputId = type === 'start' ? 'cfg-walk1' : 'cfg-walk2', btnId = type === 'start' ? 'btn-api-w1' : 'btn-api-w2';
-            if (!pName) { alert('請填寫地點名稱！'); return; }
-            const btn = document.getElementById(btnId);
-            btn.innerText = "🧠 AI運算中"; btn.disabled = true;
-            try {
-                const sName = MTR_DB[line].names[sCode] + "站";
-                const [c1, c2] = await Promise.all([ smartGeocode(pName), smartGeocode(sName) ]);
-                if (!c1 || !c2) throw new Error("特區政府地圖庫搵唔到該門牌");
-                const rRes = await fetch(`https://router.project-osrm.org/route/v1/foot/${c1.lon},${c1.lat};${c2.lon},${c2.lat}`);
-                const rData = await rRes.json();
-                if (rData.code !== "Ok") throw new Error("行路導航連線失敗");
-                let finalResult = Math.round((rData.routes[0].duration / 60) + getMtrMazePenalty(sCode));
-                if (finalResult < 1) finalResult = 1;
-                document.getElementById(inputId).value = finalResult;
-                btn.innerText = `🎯 判定: ${finalResult}分`;
-            } catch(e) { alert(`運算稍遜：${e.message}。`); btn.innerText = "⚠️ 判定失敗"; }
+                const r1 = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(pName+",香港")}&format=json&limit=1`);
+                const r2 = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sName+",香港")}&format=json&limit=1`);
+                const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
+                if (!d1.length || !d2.length) throw new Error("特區地圖庫找不到該門牌");
+                const r3 = await fetch(`https://router.project-osrm.org/route/v1/foot/${d1[0].lon},${d1[0].lat};${d2[0].lon},${d2[0].lat}`);
+                const d3 = await r3.json();
+                let mins = Math.round((d3.routes[0].duration / 60) + getMazePenalty(sCode));
+                document.getElementById(targetId).value = mins < 1 ? 1 : mins;
+                btn.innerText = `🎯 ${mins < 1 ? 1 : mins}分`;
+            } catch(e) { alert("自動測距稍遜：" + e.message); btn.innerText = "⚠️ 失敗"; }
             setTimeout(() => { btn.innerText = "📍 智能測距"; btn.disabled = false; }, 3000);
         }
 
+        function calculateAutoRoute(sCode, eCode) {
+            if (sCode === eCode) return null;
+            const lA = STA_INDEX[sCode].lines, lB = STA_INDEX[eCode].lines;
+
+            const directLine = lA.find(l => lB.includes(l));
+            if (directLine) {
+                let t = Math.abs(MTR_DB[directLine].times[sCode] - MTR_DB[directLine].times[eCode]) || 1;
+                return { type: 0, line1: directLine, s1: sCode, e1: eCode, ride: t };
+            }
+
+            for (let line1 of lA) {
+                for (let line2 of lB) {
+                    const common = MTR_DB[line1].order.filter(x => MTR_DB[line2].order.includes(x));
+                    if (common.length > 0) {
+                        common.sort((a, b) => (PREF_HUBS.indexOf(a) === -1 ? 99 : PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b) === -1 ? 99 : PREF_HUBS.indexOf(b)));
+                        let hub = common[0];
+                        let t1 = Math.abs(MTR_DB[line1].times[sCode] - MTR_DB[line1].times[hub]);
+                        let t2 = Math.abs(MTR_DB[line2].times[hub] - MTR_DB[line2].times[eCode]);
+                        return { type: 1, line1: line1, s1: sCode, e1: hub, line2: line2, s2: hub, e2: eCode, ride: t1 + t2 + 3, xName: STA_INDEX[hub].name };
+                    }
+                }
+            }
+            return { type: 0, line1: lA[0], s1: sCode, e1: sCode, ride: 15 };
+        }
+
+        const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: '形品星寓' };
+        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v2')) || DEF_CFG;
+        let activeRoute = null;
+
+        function populateSelects() {
+            const s1 = document.getElementById('cfg-start-sta'), s2 = document.getElementById('cfg-end-sta');
+            let html = '';
+            for (let l in MTR_DB) {
+                html += `<optgroup label="── ${MTR_DB[l].name} ──">`;
+                MTR_DB[l].order.forEach(c => { html += `<option value="${c}">${MTR_DB[l].names[c]}站</option>`; });
+                html += `</optgroup>`;
+            }
+            s1.innerHTML = html; s2.innerHTML = html;
+        }
+
         function initApp() {
-            const lineSel = document.getElementById('cfg-line'); lineSel.innerHTML = '';
-            for(let k in MTR_DB) lineSel.innerHTML += `<option value="${k}" ${k===curCfg.line?'selected':''}>${MTR_DB[k].name}</option>`;
-            onLineChange(curCfg.sta, curCfg.dropSta); populateForm(); applyLabelsToUI(); fetchMTR(); setInterval(fetchMTR, 10000);
-        }
-
-        function onLineChange(targetSta = null, targetDrop = null) {
-            const l = document.getElementById('cfg-line').value;
-            const staSel = document.getElementById('cfg-sta'), dropSel = document.getElementById('cfg-drop-sta');
-            staSel.innerHTML = ''; dropSel.innerHTML = '';
-            MTR_DB[l].order.forEach((code) => {
-                let sName = MTR_DB[l].names[code];
-                staSel.innerHTML += `<option value="${code}" ${code===(targetSta||MTR_DB[l].order[0])?'selected':''}>${sName}</option>`;
-                dropSel.innerHTML += `<option value="${code}" ${code===(targetDrop||MTR_DB[l].order[MTR_DB[l].order.length-1])?'selected':''}>${sName}</option>`;
-            });
-            autoCalculateRide();
-        }
-
-        function autoCalculateRide() {
-            const l = document.getElementById('cfg-line').value, s1 = document.getElementById('cfg-sta').value, s2 = document.getElementById('cfg-drop-sta').value;
-            let calcTime = Math.abs(MTR_DB[l].times[s1] - MTR_DB[l].times[s2]) || 1;
-            tempDir = MTR_DB[l].order.indexOf(s1) < MTR_DB[l].order.indexOf(s2) ? 'UP' : 'DOWN';
-            document.getElementById('cfg-dir-show').value = tempDir === 'UP' ? `上行 (${MTR_DB[l].up})` : `下行 (${MTR_DB[l].down})`;
-            document.getElementById('cfg-ride').value = `${calcTime} 分鐘`;
-        }
-
-        function populateForm() {
-            document.getElementById('cfg-start-name').value = curCfg.startName; document.getElementById('cfg-walk1').value = curCfg.walk1;
-            document.getElementById('cfg-walk2').value = curCfg.walk2; document.getElementById('cfg-dest-name').value = curCfg.destName; autoCalculateRide();
+            populateSelects();
+            document.getElementById('cfg-start-name').value = curCfg.startName;
+            document.getElementById('cfg-walk1').value = curCfg.walk1;
+            document.getElementById('cfg-start-sta').value = curCfg.sCode;
+            document.getElementById('cfg-end-sta').value = curCfg.eCode;
+            document.getElementById('cfg-dest-name').value = curCfg.destName;
+            document.getElementById('cfg-walk2').value = curCfg.walk2;
+            
+            applyUI(); fetchMTR(); setInterval(fetchMTR, 10000);
         }
 
         function toggleConfig() { const p = document.getElementById('config-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
 
         function saveAndApply() {
-            const l = document.getElementById('cfg-line').value, s1 = document.getElementById('cfg-sta').value, s2 = document.getElementById('cfg-drop-sta').value;
+            if (document.getElementById('cfg-start-sta').value === document.getElementById('cfg-end-sta').value) return alert("起點同終點車站唔可以一樣！");
             curCfg = {
                 startName: document.getElementById('cfg-start-name').value || '起點', walk1: parseInt(document.getElementById('cfg-walk1').value) || 4,
-                line: l, sta: s1, dropSta: s2, dir: tempDir, ride: Math.abs(MTR_DB[l].times[s1] - MTR_DB[l].times[s2]) || 1,
+                sCode: document.getElementById('cfg-start-sta').value, eCode: document.getElementById('cfg-end-sta').value,
                 walk2: parseInt(document.getElementById('cfg-walk2').value) || 10, destName: document.getElementById('cfg-dest-name').value || '終點'
             };
-            localStorage.setItem('my_commute_cfg_v4', JSON.stringify(curCfg)); toggleConfig(); applyLabelsToUI(); fetchMTR();
+            localStorage.setItem('my_commute_ai_v2', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
         }
 
-        function applyLabelsToUI() {
+        function applyUI() {
+            activeRoute = calculateAutoRoute(curCfg.sCode, curCfg.eCode);
             document.getElementById('main-title').innerText = `🏢 ${curCfg.startName} ➔ ${curCfg.destName}`;
             document.getElementById('label-walk-speed').innerText = `${curCfg.walk1}分鐘步速`;
-            document.getElementById('ui-start-name').innerText = curCfg.startName; document.getElementById('ui-board-name').innerText = MTR_DB[curCfg.line].names[curCfg.sta] + "站";
-            document.getElementById('ui-drop-name').innerText = MTR_DB[curCfg.line].names[curCfg.dropSta] + "站"; document.getElementById('ui-dest-name').innerText = curCfg.destName;
-            document.getElementById('ui-gap1').innerText = `+${curCfg.walk1}分`; document.getElementById('ui-gap2').innerText = `+${curCfg.ride}分`; document.getElementById('ui-gap3').innerText = `+${curCfg.walk2}分`;
-            document.getElementById('ui-dir-label').innerText = `${curCfg.dir === 'DOWN' ? MTR_DB[curCfg.line].down : MTR_DB[curCfg.line].up} ⬇️`;
+            document.getElementById('ui-start-name').innerText = curCfg.startName;
+            
+            if (activeRoute.type === 1) {
+                document.getElementById('ui-board-name').innerText = `${STA_INDEX[curCfg.sCode].name}(乘${MTR_DB[activeRoute.line1].name})`;
+                document.getElementById('ui-drop-name').innerText = `${activeRoute.xName}(轉${MTR_DB[activeRoute.line2].name})`;
+            } else {
+                document.getElementById('ui-board-name').innerText = `${STA_INDEX[curCfg.sCode].name}站`;
+                document.getElementById('ui-drop-name').innerText = `${STA_INDEX[curCfg.eCode].name}站`;
+            }
+            document.getElementById('main-card').style.borderTop = `4px solid ${MTR_DB[activeRoute.line1].color}`;
+            document.getElementById('ui-dest-name').innerText = curCfg.destName;
+            document.getElementById('ui-gap1').innerText = `+${curCfg.walk1}分`;
+            document.getElementById('ui-gap2').innerText = `+${activeRoute.ride}分`;
+            document.getElementById('ui-gap3').innerText = `+${curCfg.walk2}分`;
         }
 
-        function formatShortTime(date) { return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`; }
-        function formatCantoneseClock(date) {
-            let h = date.getHours(), m = date.getMinutes().toString().padStart(2, '0');
-            return `${h < 6 ? "凌晨" : h < 12 ? "上午" : h < 18 ? "下午" : "晚上"} ${h % 12 || 12}點${m}分`;
-        }
+        function fmtT(d) { return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`; }
+        function fmtC(d) { let h = d.getHours(), m = d.getMinutes().toString().padStart(2, '0'); return `${h < 6 ? "凌晨" : h < 12 ? "上午" : h < 18 ? "下午" : "晚上"} ${h % 12 || 12}點${m}分`; }
 
         async function fetchMTR() {
+            if (!activeRoute) return;
             const listHtml = document.getElementById('train-list');
-            try {
-                const res = await fetch(`https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${curCfg.line}&sta=${curCfg.sta}`);
-                const data = await res.json(); let key = `${curCfg.line}-${curCfg.sta}`;
-                renderDashboard(data.status === 1 && data.data[key] && data.data[key][curCfg.dir] ? data.data[key][curCfg.dir] : []);
-            } catch (e) { listHtml.innerHTML = `<div style="text-align:center; color:#ef4444; padding:10px;">連線稍慢，自動重試中...</div>`; }
-            const now = new Date(); document.getElementById('update-time').innerText = `最後同步: ${formatShortTime(now)}:${now.getSeconds().toString().padStart(2, '0')}`;
-        }
+            const l1 = activeRoute.line1, s1 = activeRoute.s1, e1 = activeRoute.e1;
+            const dir1 = MTR_DB[l1].order.indexOf(s1) < MTR_DB[l1].order.indexOf(e1) ? 'UP' : 'DOWN';
+            const url1 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l1}&sta=${s1}`;
 
-        function renderDashboard(trains) {
-            const listHtml = document.getElementById('train-list'), nCon = document.getElementById('filter-notice-container'), eBox = document.getElementById('emotion-message');
-            listHtml.innerHTML = ''; nCon.innerHTML = '';
-            if (!trains || !trains.length) { listHtml.innerHTML = '<div style="text-align:center; padding:15px; color:#94a3b8">暫無列車數據或已過尾班車 🌙</div>'; return; }
-
-            const W_MINS = curCfg.walk1;
-            const cTrains = trains.filter(t => parseInt(t.ttnt) >= W_MINS);
-            const hTrains = trains.filter(t => parseInt(t.ttnt) < W_MINS); // 被隱藏的車隊
-            
-            let dTrains = cTrains.length ? cTrains.slice(0,2) : trains.slice(0,2), isMid = !cTrains.length;
-
-            // 渲染可點擊展開的 Badge 及隱藏清單
-            if (cTrains.length && hTrains.length > 0) {
-                let hiddenHtml = hTrains.map(t => {
-                    let m = parseInt(t.ttnt);
-                    return `<div class="hidden-train-item"><span class="hidden-train-label">🏃‍♂️ 飛走咗/趕唔切嘅車</span><span class="hidden-train-time">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
-                }).join('');
-
-                nCon.innerHTML = `
-                    <div class="filter-badge" onclick="toggleHiddenTrains()" title="點擊查看或收起">
-                        💡 已隱藏 ${hTrains.length} 班少於${W_MINS}分鐘到站嘅車 <span id="hidden-arrow">${isHiddenListExpanded ? '▲' : '▼'}</span>
-                    </div>
-                    <div id="hidden-trains-box" style="display: ${isHiddenListExpanded ? 'block' : 'none'}; margin-top: 4px;">
-                        ${hiddenHtml}
-                    </div>
-                `;
+            let url2 = null, dir2 = null, l2 = null, s2 = null;
+            if (activeRoute.type === 1) {
+                l2 = activeRoute.line2; s2 = activeRoute.s2; let e2 = activeRoute.e2;
+                dir2 = MTR_DB[l2].order.indexOf(s2) < MTR_DB[l2].order.indexOf(e2) ? 'UP' : 'DOWN';
+                url2 = `https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${l2}&sta=${s2}`;
             }
 
-            if (isMid) nCon.innerHTML = `<div class="filter-badge" style="color:#ef4444; background:#ef444415; cursor:default;">⚠️ 警告：即將開出尾班車</div>`;
+            try {
+                const reqs = [fetch(url1)]; if (url2) reqs.push(fetch(url2));
+                const res = await Promise.all(reqs);
+                const d1 = await res[0].json(); const d2 = url2 ? await res[1].json() : null;
 
-            let tMins = parseInt(dTrains[0].ttnt) || 0;
-            dTrains.forEach((t, i) => {
-                let m = parseInt(t.ttnt), cls = isMid ? "too-late" : (m === W_MINS || m === W_MINS + 1) ? "urgent" : "";
-                listHtml.innerHTML += `<div class="${i===0?'train next-train':'train'}"><span class="train-label">${isMid&&i===0?'🚨 趕唔切嘅尾班車':i===0?'🎯 最快趕得上':'🛡️ 下一班備用'}</span><span class="train-time ${cls}">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
+                renderDashboard(d1.data[`${l1}-${s1}`][dir1]||[], d2 ? d2.data[`${l2}-${s2}`][dir2]||[] : null);
+            } catch (err) { listHtml.innerHTML = `<div style="text-align:center; color:#64748b; padding:15px;">⏳ AI 實時追蹤列車中...</div>`; }
+            
+            const now = new Date(); document.getElementById('update-time').innerText = `最後同步: ${fmtT(now)}:${now.getSeconds().toString().padStart(2, '0')}`;
+        }
+
+        function renderDashboard(t1, t2) {
+            const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message');
+            const W = curCfg.walk1;
+            const validT1 = t1.filter(t => parseInt(t.ttnt) >= W);
+            let showT1 = validT1.length ? validT1.slice(0,2) : t1.slice(0,2), isMid = !validT1.length;
+
+            let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 第一程：${MTR_DB[activeRoute.line1].name} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
+            showT1.forEach((t, i) => {
+                let m = parseInt(t.ttnt), cls = isMid ? "too-late" : (m === W || m === W + 1) ? "urgent" : "";
+                html += `<div class="${i===0?'train next-train':'train'}"><span class="train-label">${i===0?'🎯 最快趕得上':'🛡️ 次班備用'}</span><span class="train-time ${cls}">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
             });
 
-            let now = new Date(), tB = new Date(now.getTime() + tMins*60000), tD = new Date(tB.getTime() + curCfg.ride*60000), tE = new Date(tD.getTime() + curCfg.walk2*60000);
-            document.getElementById('t-start').innerText = formatShortTime(now); document.getElementById('t-lof').innerText = formatShortTime(tB);
-            document.getElementById('t-mok').innerText = formatShortTime(tD); document.getElementById('t-dest').innerText = formatShortTime(tE);
-            document.getElementById('total-duration').innerText = `共 ${Math.round((tE - now)/60000)} 分鐘`; document.getElementById('arrive-clock').innerText = formatCantoneseClock(tE);
+            if (activeRoute.type === 1 && t2 && t2.length) {
+                html += `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line2].color}">🔄 轉車接駁：${MTR_DB[activeRoute.line2].name} (${activeRoute.xName}站轉乘)</div>`;
+                t2.slice(0,2).forEach((t, i) => {
+                    let m = parseInt(t.ttnt);
+                    html += `<div class="train"><span class="train-label">${i===0?'⚡ 預計中轉列車':'🛡️ 次班接駁'}</span><span class="train-time" style="color:#38bdf8">${isNaN(m)?"即將抵達":m+" 分鐘"}</span></div>`;
+                });
+            }
+            listHtml.innerHTML = html;
 
-            eBox.style.display = 'block'; eBox.className = 'emotion-box ' + (isMid ? 'mood-giveup' : (tMins === W_MINS || tMins === W_MINS+1) ? 'mood-run' : 'mood-chill');
-            eBox.innerHTML = isMid ? `🚨 尾班車剩返 ${tMins} 分鐘！行去月台要 ${W_MINS} 分鐘，飛機都趕唔切，截的士啦！` : (tMins === W_MINS || tMins === W_MINS+1) ? `🔥 <b>黃金出門一刻！</b> 列車 ${tMins} 分鐘後到，你行過去需時 ${W_MINS} 分鐘，依家起行啱啱好！` : `😎 勁度充裕！最快車喺 ${tMins} 分鐘後，行過去只需 ${W_MINS} 分鐘，慢慢嘆多杯水先起行。`;
+            let tMins = parseInt(showT1[0]?.ttnt) || 0;
+            let now = new Date(), tB = new Date(now.getTime() + tMins*60000), tE = new Date(tB.getTime() + (activeRoute.ride + curCfg.walk2)*60000);
+            
+            document.getElementById('t-start').innerText = fmtT(now); document.getElementById('t-lof').innerText = fmtT(tB);
+            document.getElementById('t-mok').innerText = fmtT(new Date(tB.getTime() + (activeRoute.ride - (activeRoute.type?6:0))*60000)); document.getElementById('t-dest').innerText = fmtT(tE);
+            document.getElementById('total-duration').innerText = `共 ${Math.round((tE - now)/60000)} 分鐘`; document.getElementById('arrive-clock').innerText = fmtC(tE);
+
+            eBox.style.display = 'block'; eBox.className = 'emotion-box ' + (isMid ? 'mood-giveup' : (tMins === W || tMins === W+1) ? 'mood-run' : 'mood-chill');
+            eBox.innerHTML = isMid ? `🚨 列車剩返 ${tMins} 分鐘！行過去要 ${W} 分鐘，神仙都難救，截的士啦！` : (tMins === W || tMins === W+1) ? `🔥 <b>黃金出門一刻！</b> 列車 ${tMins} 分鐘後到，你行過去需時 ${W} 分鐘，依家起行啱啱好！` : `😎 勁度充裕！最快車喺 ${tMins} 分鐘後，行過去只需 ${W} 分鐘，慢慢嘆多杯水先起行。`;
         }
 
         initApp();
