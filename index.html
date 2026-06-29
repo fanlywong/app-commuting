@@ -174,7 +174,7 @@
             'TCL': { name: '東涌綫', up: '往東涌', down: '往香港', order: ['HOK','KOW','OLY','NAC','LAK','TSY','SUN','TUC'], times: { HOK:0, KOW:3, OLY:5, NAC:8, LAK:12, TSY:15, SUN:23, TUC:31 }, names: { HOK:'香港', KOW:'九龍', OLY:'奧運', NAC:'南昌', LAK:'荔景', TSY:'青衣', SUN:'欣澳', TUC:'東涌' }}
         };
 
-        const DEF_CFG = { startName: '富強苑', walk1: 4, line: 'KTL', sta: 'LOF', dropSta: 'MOK', dir: 'DOWN', ride: 9, walk2: 10, destName: '形品星寓' };
+       const DEF_CFG = { startName: '朗豪坊', walk1: 4, line: 'TWL', sta: 'MOK', dropSta: 'TST', dir: 'DOWN', ride: 6, walk2: 5, destName: '海港城' };
         let curCfg = JSON.parse(localStorage.getItem('my_commute_cfg_v4')) || DEF_CFG;
         let tempDir = curCfg.dir;
         
