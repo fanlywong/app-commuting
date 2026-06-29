@@ -24,7 +24,6 @@
 
         .card { background: var(--card-bg); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); border-top: 3.5px solid var(--ktl-green); transition: border-color 0.3s;}
         
-        /* 📱 手機專屬極簡表單網格 */
         #config-panel { display: none; border-top: 3.5px solid #38bdf8; }
         .cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .cfg-full { grid-column: span 2; }
@@ -42,13 +41,10 @@
         optgroup { font-weight: bold; color: #38bdf8; background: #0f172a; }
         option { color: #f8fafc; background: #1e293b; padding: 6px 0;}
 
-        /* 輸入框內微型膠囊掣 */
         .btn-mini { height: 26px; padding: 0 8px; font-size: 0.68rem; border-radius: 5px; margin-right: 5px; background: #1e293b; color: #38bdf8; border: 1px solid #334155; font-weight: 600; flex-shrink: 0; cursor: pointer;}
         .btn-mini.gps { color: #10b981; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); }
 
-        /* 📱 高級感 Mobile Action 按鈕區 */
         .cfg-actions { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; margin-top: 16px; }
-        
         .btn-cancel { height: 38px; background: transparent; border: 1px solid #334155; color: #64748b; border-radius: 8px; font-size: 0.82rem; font-weight: 600;}
         .btn-save-confirm { height: 38px; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; border-radius: 8px; font-size: 0.82rem; font-weight: 600;}
         
@@ -59,14 +55,18 @@
         }
         .btn-ai-glow:active { transform: scale(0.99); background: #1d4ed8; }
 
-        .timeline { display: flex; justify-content: space-between; align-items: center; background: #090d16; padding: 14px 4px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.03);}
-        .step { text-align: center; flex: 1; font-size: 0.72rem; color: var(--text-sub); overflow: hidden;}
-        .step span { display: block; font-size: 1.1rem; margin-bottom: 3px; }
-        .step .loc-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1;}
-        .step b { display: block; font-size: 0.9rem; color: #38bdf8; margin-top: 3px; font-weight: 700;}
-        .step b.dest-time { color: var(--clock-gold); font-size: 1rem; }
-        .arrow-box { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0;}
-        .arrow-time { font-size: 0.62rem; color: #64748b; background: #111827; padding: 1px 4px; border-radius: 4px; font-weight: bold;}
+        /* 🟢 動態彈性時間軸容器 */
+        .timeline { display: flex; justify-content: space-between; align-items: flex-start; background: #090d16; padding: 14px 2px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.03);}
+        .step { text-align: center; flex: 1; min-width: 0; font-size: 0.72rem; color: var(--text-sub); overflow: hidden;}
+        .step span { display: block; font-size: 1.1rem; margin-bottom: 2px; }
+        .step .loc-name { display: block; font-size: 0.65rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1; margin-top: 2px;}
+        .step b { display: block; font-size: 0.82rem; color: #38bdf8; margin-top: 2px; font-weight: 700;}
+        .step b.dest-time { color: var(--clock-gold); font-size: 0.92rem; }
+        
+        .sub-transfer { display: block; font-size: 0.55rem; color: #f43f5e; font-style: normal; margin-top: 1px; white-space: nowrap; letter-spacing: -0.3px;}
+
+        .arrow-box { display: flex; flex-direction: column; align-items: center; width: 22px; flex-shrink: 0; margin-top: 4px;}
+        .arrow-time { font-size: 0.58rem; color: #64748b; background: #111827; padding: 1px 3px; border-radius: 3px; font-weight: bold;}
         
         .section-title { font-size: 0.98rem; font-weight: 700; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
         .route-sub-title { font-size: 0.82rem; color: #38bdf8; margin: 12px 0 5px 0; font-weight: 700; display: flex; align-items: center; gap: 5px;}
@@ -141,14 +141,8 @@
 
     <div class="card" id="main-card">
         <div class="section-title"><span>📍 行程路標</span><span id="label-walk-speed" style="font-size:0.78rem; color:#64748b">--分步速</span></div>
-        <div class="timeline">
-            <div class="step"><span>🚶‍♂️</span><div class="loc-name" id="ui-start-name">--</div><b id="t-start">--:--</b></div>
-            <div class="arrow-box"><span class="arrow-time" id="ui-gap1">--分</span>➔</div>
-            <div class="step"><span>🚇</span><div class="loc-name" id="ui-board-name">--</div><b id="t-lof">--:--</b></div>
-            <div class="arrow-box"><span class="arrow-time" id="ui-gap2">--分</span>➔</div>
-            <div class="step"><span>🚶‍♀️</span><div class="loc-name" id="ui-drop-name">--</div><b id="t-mok">--:--</b></div>
-            <div class="arrow-box"><span class="arrow-time" id="ui-gap3">--分</span>➔</div>
-            <div class="step"><span>🏁</span><div class="loc-name" id="ui-dest-name">--</div><b id="t-dest" class="dest-time">--:--</b></div>
+        <div class="timeline" id="dynamic-timeline-box">
+            <div style="text-align:center; width:100%; color:#64748b; font-size:0.8rem;">軌道地圖生成中...</div>
         </div>
     </div>
 
@@ -188,7 +182,6 @@
             });
         }
 
-        // 🟢 嚴格補回被刪走的 Helper 函數
         const fmtT = d => `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
         const fmtC = d => { let h = d.getHours(), m = d.getMinutes().toString().padStart(2, '0'); return `${h < 6 ? "凌晨" : h < 12 ? "上午" : h < 18 ? "下午" : "晚上"} ${h % 12 || 12}點${m}分`; };
 
@@ -291,7 +284,7 @@
                 }
 
                 curCfg = { startName: sName, walk1: w1, sCode: sCode, eCode: eCode, walk2: w2, destName: dName };
-                localStorage.setItem('my_commute_mobile_v12', JSON.stringify(curCfg));
+                localStorage.setItem('my_commute_v14_dynamic_interchange', JSON.stringify(curCfg));
                 
                 syncFormValues();
                 document.getElementById('config-panel').style.display = 'none';
@@ -312,7 +305,7 @@
             let w2 = parseInt(document.getElementById('cfg-walk2').value) || 3;
 
             curCfg = { startName: sName, walk1: w1, sCode: sCode, eCode: eCode, walk2: w2, destName: dName };
-            localStorage.setItem('my_commute_mobile_v12', JSON.stringify(curCfg));
+            localStorage.setItem('my_commute_v14_dynamic_interchange', JSON.stringify(curCfg));
             
             document.getElementById('config-panel').style.display = 'none';
             applyUI(); fetchMTR();
@@ -344,20 +337,30 @@
             });
         }
 
+        // 🧠 尋路大腦升級：回傳分段車程 Leg 資料
         function calculateAutoRoute(sCode, eCode) {
             if (sCode === eCode) return { type: 0, line1: STA_INDEX[sCode].lines[0], s1: sCode, e1: sCode, ride: 0 };
             const lA = STA_INDEX[sCode].lines, lB = STA_INDEX[eCode].lines;
+            
             const directLine = lA.find(l => lB.includes(l));
             if (directLine) {
-                return { type: 0, line1: directLine, s1: sCode, e1: eCode, ride: Math.abs(MTR_DB[directLine].times[sCode] - MTR_DB[directLine].times[eCode]) || 1 };
+                let t = Math.abs(MTR_DB[directLine].times[sCode] - MTR_DB[directLine].times[eCode]) || 1;
+                return { type: 0, line1: directLine, s1: sCode, e1: eCode, ride: t };
             }
+
             for (let line1 of lA) {
                 for (let line2 of lB) {
                     const common = MTR_DB[line1].order.filter(x => MTR_DB[line2].order.includes(x));
                     if (common.length > 0) {
                         common.sort((a, b) => (PREF_HUBS.indexOf(a)===-1?99:PREF_HUBS.indexOf(a)) - (PREF_HUBS.indexOf(b)===-1?99:PREF_HUBS.indexOf(b)));
                         let hub = common[0];
-                        return { type: 1, line1: line1, s1: sCode, e1: hub, line2: line2, s2: hub, e2: eCode, ride: Math.abs(MTR_DB[line1].times[sCode]-MTR_DB[line1].times[hub]) + Math.abs(MTR_DB[line2].times[hub]-MTR_DB[line2].times[eCode]) + 3, xName: STA_INDEX[hub].name };
+                        let t1 = Math.abs(MTR_DB[line1].times[sCode] - MTR_DB[line1].times[hub]);
+                        let t2 = Math.abs(MTR_DB[line2].times[hub] - MTR_DB[line2].times[eCode]);
+                        
+                        return { 
+                            type: 1, line1: line1, s1: sCode, e1: hub, line2: line2, s2: hub, e2: eCode, 
+                            ride: t1 + t2 + 3, xName: STA_INDEX[hub].name, tLeg1: t1, tLeg2: t2 
+                        };
                     }
                 }
             }
@@ -365,7 +368,7 @@
         }
 
         const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 3, destName: 'K11' };
-        let curCfg = JSON.parse(localStorage.getItem('my_commute_mobile_v12')) || DEF_CFG;
+        let curCfg = JSON.parse(localStorage.getItem('my_commute_v14_dynamic_interchange')) || DEF_CFG;
         let activeRoute = null; let isSprintOpen = false;
 
         function toggleSprintDrawer() {
@@ -404,12 +407,7 @@
             activeRoute = calculateAutoRoute(curCfg.sCode, curCfg.eCode);
             document.getElementById('main-title').innerText = `🏢 ${curCfg.startName} ➔ ${curCfg.destName}`;
             document.getElementById('label-walk-speed').innerText = `${curCfg.walk1}分鐘步速`;
-            document.getElementById('ui-start-name').innerText = curCfg.startName;
-            document.getElementById('ui-board-name').innerText = activeRoute.type === 1 ? `${STA_INDEX[curCfg.sCode].name}(乘${MTR_DB[activeRoute.line1].name})` : `${STA_INDEX[curCfg.sCode].name}站`;
-            document.getElementById('ui-drop-name').innerText = activeRoute.type === 1 ? `${activeRoute.xName}(轉${MTR_DB[activeRoute.line2].name})` : `${STA_INDEX[curCfg.eCode].name}站`;
-            document.getElementById('main-card').style.borderTop = `4px solid ${MTR_DB[activeRoute.line1].color}`;
-            document.getElementById('ui-dest-name').innerText = curCfg.destName;
-            document.getElementById('ui-gap1').innerText = `+${curCfg.walk1}分`; document.getElementById('ui-gap2').innerText = `+${activeRoute.ride}分`; document.getElementById('ui-gap3').innerText = `+${curCfg.walk2}分`;
+            document.getElementById('main-card').style.borderTop = `3.5px solid ${MTR_DB[activeRoute.line1].color}`;
         }
 
         async function fetchMTR() {
@@ -429,7 +427,7 @@
                 const d1 = await res[0].json(); const d2 = u2 ? await res[1].json() : null;
                 renderDashboard(d1.data[`${l1}-${s1}`][dir1]||[], d2 ? d2.data[`${l2}-${s2}`][dir2]||[] : null);
             } catch (err) {}
-            let now = new Date(); document.getElementById('update-time').innerText = `最後更新: ${fmtT(now)}`;
+            let now = new Date(); document.getElementById('update-time').innerText = `最後同步: ${fmtT(now)}`;
         }
 
         function renderDashboard(t1, t2) {
@@ -459,10 +457,52 @@
             }
             listHtml.innerHTML = html;
 
-            let tMins = parseInt((showWalk[0]||t1[0])?.ttnt) || 0, tB = new Date(now.getTime() + tMins*60000), tE = new Date(tB.getTime() + (activeRoute.ride + curCfg.walk2)*60000);
-            document.getElementById('t-start').innerText = fmtT(now); document.getElementById('t-lof').innerText = fmtT(tB);
-            document.getElementById('t-mok').innerText = fmtT(new Date(tB.getTime() + (activeRoute.ride - (activeRoute.type?6:0))*60000)); document.getElementById('t-dest').innerText = fmtT(tE);
-            document.getElementById('total-duration').innerText = `共 ${Math.round((tE - now)/60000)} 分鐘`; document.getElementById('arrive-clock').innerText = fmtC(tE);
+            // 🌟 動態生成行程路標引擎 (動態 4格 vs 5格)
+            let tMins = parseInt((showWalk[0]||t1[0])?.ttnt) || 0;
+            let tBoard = new Date(now.getTime() + tMins * 60000);
+            let tlContainer = document.getElementById('dynamic-timeline-box');
+            let tlHtml = '';
+
+            if (activeRoute.type === 0) {
+                // 直達 (4個點)
+                let tAlight = new Date(tBoard.getTime() + activeRoute.ride * 60000);
+                let tDest = new Date(tAlight.getTime() + curCfg.walk2 * 60000);
+                tlHtml = `
+                <div class="step"><span>🚶‍♂️</span><div class="loc-name">${curCfg.startName}</div><b>${fmtT(now)}</b></div>
+                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk1}分</span>➔</div>
+                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.sCode].name}站</div><b>${fmtT(tBoard)}</b></div>
+                <div class="arrow-box"><span class="arrow-time">+${activeRoute.ride}分</span>➔</div>
+                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.eCode].name}站</div><b>${fmtT(tAlight)}</b></div>
+                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk2}分</span>➔</div>
+                <div class="step"><span>🏁</span><div class="loc-name">${curCfg.destName}</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
+                
+                document.getElementById('total-duration').innerText = `共 ${Math.round((tDest - now)/60000)} 分鐘`; 
+                document.getElementById('arrive-clock').innerText = fmtC(tDest);
+            } else {
+                // 轉綫 (5個點)
+                let tHub = new Date(tBoard.getTime() + activeRoute.tLeg1 * 60000);
+                let tAlight = new Date(tHub.getTime() + (3 + activeRoute.tLeg2) * 60000);
+                let tDest = new Date(tAlight.getTime() + curCfg.walk2 * 60000);
+
+                tlHtml = `
+                <div class="step"><span>🚶‍♂️</span><div class="loc-name">${curCfg.startName}</div><b>${fmtT(now)}</b></div>
+                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk1}分</span>➔</div>
+                
+                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.sCode].name}站</div><b>${fmtT(tBoard)}</b></div>
+                <div class="arrow-box"><span class="arrow-time">+${activeRoute.tLeg1}分</span>➔</div>
+                
+                <div class="step"><span>🔄</span><div class="loc-name" style="color:#38bdf8">${activeRoute.xName}站</div><b style="color:#38bdf8">${fmtT(tHub)}</b><em class="sub-transfer">轉${MTR_DB[activeRoute.line2].name.replace('綫','')}</em></div>
+                <div class="arrow-box"><span class="arrow-time">+${3+activeRoute.tLeg2}分</span>➔</div>
+                
+                <div class="step"><span>🚇</span><div class="loc-name">${STA_INDEX[curCfg.eCode].name}站</div><b>${fmtT(tAlight)}</b></div>
+                <div class="arrow-box"><span class="arrow-time">+${curCfg.walk2}分</span>➔</div>
+                
+                <div class="step"><span>🏁</span><div class="loc-name">${curCfg.destName}</div><b class="dest-time">${fmtT(tDest)}</b></div>`;
+
+                document.getElementById('total-duration').innerText = `共 ${Math.round((tDest - now)/60000)} 分鐘`; 
+                document.getElementById('arrive-clock').innerText = fmtC(tDest);
+            }
+            tlContainer.innerHTML = tlHtml;
 
             eBox.style.display = 'block';
             if (isMid) { eBox.className = 'emotion-box mood-giveup'; eBox.innerHTML = `🚨 列車剩返 ${tMins} 分鐘！行過去要 ${W} 分鐘，截的士啦！`; }
