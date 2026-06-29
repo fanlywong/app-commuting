@@ -58,9 +58,9 @@
         .timeline { display: flex; justify-content: space-between; align-items: flex-start; background: #090d16; padding: 14px 2px; border-radius: 12px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.03);}
         .step { text-align: center; flex: 1; min-width: 0; font-size: 0.72rem; color: var(--text-sub); overflow: hidden;}
         .step span { display: block; font-size: 1.1rem; margin-bottom: 2px; }
-        .step .loc-name { display: block; font-size: 0.65rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1; margin-top: 2px;}
-        .step b { display: block; font-size: 0.82rem; color: #38bdf8; margin-top: 2px; font-weight: 700;}
-        .step b.dest-time { color: var(--clock-gold); font-size: 0.92rem; }
+        .step .loc-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #cbd5e1;}
+        .step b { display: block; font-size: 0.9rem; color: #38bdf8; margin-top: 3px; font-weight: 700;}
+        .step b.dest-time { color: var(--clock-gold); font-size: 1rem; }
         
         .sub-transfer { display: block; font-size: 0.55rem; color: #f43f5e; font-style: normal; margin-top: 1px; white-space: nowrap; letter-spacing: -0.3px;}
 
@@ -77,8 +77,8 @@
 
         .sprint-card-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #1e293b50; border: 1px solid #ef444430; border-radius: 10px; }
 
-        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 10px 12px; background: #090d1680; border-radius: 10px; border: 1px solid #33415540;}
-        .train.next-train { background: rgba(16,185,129,0.06); border-left: 3.5px solid var(--success); }
+        .train { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding: 10px 12px; background: #0f172a80; border-radius: 10px; border: 1px solid #33415550;}
+        .train.next-train { background: rgba(16, 185, 129, 0.06); border-left: 4px solid var(--success); }
         .train-time { font-size: 1.5rem; font-weight: 800; color: var(--success); }
         .train-time.urgent { color: var(--warning); }
         .train-time.too-late { color: var(--danger); }
@@ -91,7 +91,7 @@
         .clock-val.target { color: var(--clock-gold); font-size: 1.38rem; }
         .divider { width: 1px; height: 32px; background: #334155; }
 
-        .emotion-box { padding: 12px; border-radius: 10px; text-align: center; font-size: 0.88rem; font-weight: bold; margin-top: 14px; line-height: 1.4; }
+        .emotion-box { padding: 12px; border-radius: 12px; text-align: center; font-size: 0.88rem; font-weight: bold; margin-top: 14px; line-height: 1.4; }
         .mood-chill { background: #10b98115; color: #34d399; } .mood-run { background: #f59e0b15; color: #fbbf24; } .mood-giveup { background: #ef444415; color: #f87171; }
         #update-time { text-align: center; font-size: 0.7rem; color: #475569; margin-top: 10px; }
     </style>
@@ -429,7 +429,6 @@
             let showWalk = walkTrains.slice(0, 2);
             let isMid = !walkTrains.length && !sprintTrains.length;
 
-            // 🎯 【Bug 1 修正】動態判斷直達還是跨綫，告別永遠寫死「第一程」的愚蠢邏輯
             let lineTitle = activeRoute.type === 0 ? `直達路綫：${MTR_DB[activeRoute.line1].name}` : `第一程：${MTR_DB[activeRoute.line1].name}`;
             let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 ${lineTitle} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
 
@@ -460,17 +459,25 @@
             }
             listHtml.innerHTML = html;
 
-            // 🎯 【Bug 2 核心修正：防時空穿越算法】
-            // 如果正常步速 (showWalk) 有車，時鐘嚴格對齊第一班穩陣車
-            // 如果正常步速無車，代表你行路太慢！此時上車那一格的時間，絕對不能取 t1[0] (已開走的車)，
-            // 必須改為：現在時間 + 10 分鐘步行時間，作為「踏上月台」的起點錨定，再尋找第一班你等得到的狂奔車/後備車來投影！
+            // 🎯 【時空防禦核心修復】
+            // 重新定義「真正坐得到嘅第一班車」時間戳
             let tMins = 0;
+            let finalTargetTrain = null; // 用來精準追蹤最終到底對齊哪一班車
+
             if (showWalk.length > 0) {
-                tMins = parseInt(showWalk[0].ttnt) || 0;
+                finalTargetTrain = showWalk[0];
+                tMins = parseInt(finalTargetTrain.ttnt) || 0;
             } else {
-                // 找出第一班到站時間大於等於 0 的有效車（即狂奔清單裡最快的那班）
-                let backupTrain = t1.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= 0);
-                tMins = backupTrain ? Math.max(W, parseInt(backupTrain.ttnt)) : W; 
+                // 如果正常步速區空空如也，尋找地鐵網絡下一班（大於等於W）或者整個清單中最安全的備用班次
+                let absoluteNext = t1.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= W);
+                if (absoluteNext) {
+                    finalTargetTrain = absoluteNext;
+                    tMins = parseInt(absoluteNext.ttnt);
+                } else {
+                    // 真特麼連後備車都沒了，才拿清單底部的車撐著，並且死守月台安全底線 W 分鐘
+                    let backup = t1.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= 0);
+                    tMins = backup ? Math.max(W, parseInt(backup.ttnt)) : W;
+                }
             }
 
             let tBoard = new Date(now.getTime() + tMins * 60000);
@@ -516,11 +523,36 @@
             }
             tlContainer.innerHTML = tlHtml;
 
+            // 🎯 【情緒語意核心修復】解決「0分鐘快跑」與「虛假10分鐘後到」的雙重分裂
             eBox.style.display = 'block';
-            if (isMid) { eBox.className = 'emotion-box mood-giveup'; eBox.innerHTML = `🚨 列車剩返 ${tMins} 分鐘！行過去要 ${W} 分鐘，截的士啦！`; }
-            else if (sprintTrains.length > 0 && isSprintOpen) { eBox.className = 'emotion-box mood-run'; eBox.innerHTML = `⚡ <b>搏盡模式開啟！</b> 最近列車 ${parseInt(sprintTrains[0].ttnt)} 分鐘後到……<b>快跑！</b>`; }
-            else if (tMins === W || tMins === W + 1) { eBox.className = 'emotion-box mood-run'; eBox.innerHTML = `🔥 <b>黃金出門一刻！</b> 列車 ${tMins} 分鐘後到，依家起行啱啱好！`; }
-            else { eBox.className = 'emotion-box mood-chill'; eBox.innerHTML = `😎 勁度充裕！最快車喺 ${tMins} 分鐘後，慢慢嘆多杯水先起行。`; }
+            if (isMid) {
+                eBox.className = 'emotion-box mood-giveup';
+                eBox.innerHTML = `🚨 鐵路網絡已接近尾班車，完全無車可搭！請立刻截的士！`;
+            } else if (showWalk.length === 0) {
+                // 🛑 核心邏輯 A：當正常步速無車，進入「理性等車/搏盡」雙軌提示
+                eBox.className = 'emotion-box mood-run';
+                let nextValidMins = finalTargetTrain ? parseInt(finalTargetTrain.ttnt) : W;
+                
+                if (sprintTrains.length > 0) {
+                    let sprintMins = parseInt(sprintTrains[0].ttnt);
+                    if (sprintMins <= 1) {
+                        eBox.innerHTML = `🐢 慢著！最近嗰班車得返 ${sprintMins} 分鐘，點跑都衝唔到！建議安份守己等多 ${nextValidMins} 分鐘坐下一班穩陣車。`;
+                    } else {
+                        eBox.innerHTML = `⚡ <b>搏盡模式！</b> 正常行會送車尾。但如果你依家<b>即刻跑</b>，有望衝到 ${sprintMins} 分鐘後嗰班車！唔跑嘅話就要等 ${nextValidMins} 分鐘。`;
+                    }
+                } else {
+                    eBox.innerHTML = `⏳ 正常步速啱啱送車尾。下一班安全趕得上嘅列車會喺 ${nextValidMins} 分鐘後抵達，慢慢行去嘆杯茶先。`;
+                }
+            } else {
+                // 🛑 核心邏輯 B：正常步速有車，回歸原有標準提示
+                if (tMins === W || tMins === W + 1) {
+                    eBox.className = 'emotion-box mood-run';
+                    eBox.innerHTML = `🔥 <b>黃金出門一刻！</b> 正常首選班次將於 ${tMins} 分鐘後到站，你行過去需時 ${W} 分鐘，依家出發啱啱好！`;
+                } else {
+                    eBox.className = 'emotion-box mood-chill';
+                    eBox.innerHTML = `😎 時間非常充裕！首選班次喺 ${tMins} 分鐘後先到，行過去只需 ${W} 分鐘，慢慢嘆多杯水先起行。`;
+                }
+            }
         }
 
         initApp();
