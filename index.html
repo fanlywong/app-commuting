@@ -24,7 +24,7 @@
 
         .card { background: var(--card-bg); padding: 18px; border-radius: 18px; margin-bottom: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4); border-top: 4px solid var(--ktl-green); transition: border-color 0.3s;}
         
-        /* 🛠️ 現代化表單設計 (UI 大整容) */
+        /* 🛠️ 邏輯重組後的表單網格 */
         #config-panel { display: none; border-top: 4px solid #38bdf8; }
         .cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
         .cfg-full { grid-column: span 2; }
@@ -105,27 +105,30 @@
     <div id="config-panel" class="card">
         <div class="section-title" style="color:#38bdf8">🤖 AI 智能尋路設定</div>
         <div class="cfg-grid">
-            <div class="cfg-group"><label>起點出發門牌</label>
-                <div class="input-box"><input type="text" id="cfg-start-name" placeholder="例：富強苑"></div>
+            
+            <div class="cfg-group"><label>起點</label>
+                <div class="input-box"><input type="text" id="cfg-start-name" placeholder="例：APM"></div>
             </div>
             <div class="cfg-group"><label>步行往地鐵站 (分)</label>
                 <div class="input-box"><input type="number" id="cfg-walk1" min="1"><button type="button" class="btn-side" onclick="smartWalk('start')">測距</button></div>
             </div>
             
-            <div class="cfg-group cfg-full"><label>由邊個車站上車 (AI規劃時會強制覆蓋此欄)</label>
-                <div class="input-box"><select id="cfg-start-sta"></select><button type="button" class="btn-side gps" onclick="geoLocateMTR()">📍 定位</button></div>
-            </div>
-            <div class="cfg-group cfg-full"><label>去邊個車站落車 (AI規劃時會強制覆蓋此欄)</label>
-                <div class="input-box"><select id="cfg-end-sta"></select></div>
-            </div>
-            
-            <div class="cfg-group"><label>終點上班門牌</label>
-                <div class="input-box"><input type="text" id="cfg-dest-name" placeholder="例：形品星寓"></div>
+            <div class="cfg-group"><label>終點</label>
+                <div class="input-box"><input type="text" id="cfg-dest-name" placeholder="例：K11"></div>
             </div>
             <div class="cfg-group"><label>出站步往終點 (分)</label>
                 <div class="input-box"><input type="number" id="cfg-walk2" min="1"><button type="button" class="btn-side" onclick="smartWalk('dest')">測距</button></div>
             </div>
+
+            <div class="cfg-group cfg-full"><label>上車車站 (AI規劃時會自動計算)</label>
+                <div class="input-box"><select id="cfg-start-sta"></select><button type="button" class="btn-side gps" onclick="geoLocateMTR()">📍 定位</button></div>
+            </div>
+            <div class="cfg-group cfg-full"><label>落車車站 (AI規劃時會自動計算)</label>
+                <div class="input-box"><select id="cfg-end-sta"></select></div>
+            </div>
+
         </div>
+        
         <div class="cfg-actions">
             <button class="btn-ghost" onclick="toggleConfig()">取消</button>
             <button id="btn-save-main" class="btn-ai-glow" onclick="runAutoPathfinder()">🤖 一鍵 AI 智能規劃全行程</button>
@@ -159,22 +162,16 @@
     <div id="update-time">系統載入中...</div>
 
     <script>
-        // 🟢 正確註冊實體 ServiceWorker 檔案
         if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
             navigator.serviceWorker.register('./sw.js').catch(()=>{});
         }
 
-        // 全港車站經緯度雷達庫 (純實體矩陣，拒絕聯網延遲)
         const MTR_GEO = { LOF:[22.3385,114.1870], WTS:[22.3420,114.1930], SKM:[22.3320,114.1680], PRE:[22.3245,114.1682], MOK:[22.3192,114.1694], YMT:[22.3130,114.1706], JOR:[22.3048,114.1718], TST:[22.2980,114.1722], ADM:[22.2798,114.1648], CEN:[22.2818,114.1582], SHW:[22.2868,114.1520], SYP:[22.2865,114.1428], HKU:[22.2842,114.1338], KET:[22.2812,114.1280], WAC:[22.2778,114.1730], CAB:[22.2802,114.1852], TIN:[22.2825,114.1918], FOH:[22.2888,114.1940], NOP:[22.2912,114.2005], QUB:[22.2882,114.2105], TAK:[22.2848,114.2168], SWH:[22.2820,114.2222], SKW:[22.2788,114.2288], HFC:[22.2768,114.2388], CHW:[22.2648,114.2368], KOT:[22.3370,114.1760], CHH:[22.3348,114.2088], DIH:[22.3402,114.2018], KOB:[22.3238,114.2140], NTK:[22.3158,114.2188], KWT:[22.3122,114.2251], LAT:[22.3072,114.2328], YAT:[22.2982,114.2380], TIK:[22.3070,114.2525], TKO:[22.3088,114.2605], HAH:[22.3158,114.2648], POA:[22.3230,114.2580], HUH:[22.3032,114.1818], MKK:[22.3218,114.1725], TAW:[22.3730,114.1788], SHT:[22.3832,114.1878], FOT:[22.3962,114.1980], UNI:[22.4138,114.2105], TAP:[22.4442,114.1688], TWO:[22.4508,114.1618], FAN:[22.4925,114.1388], SHS:[22.5015,114.1280], LOW:[22.5288,114.1130], EXC:[22.2828,114.1748], HOM:[22.3092,114.1825], WHA:[22.3042,114.1895], OLY:[22.3180,114.1600], KOW:[22.3048,114.1612], HOK:[22.2848,114.1582], NAC:[22.3268,114.1538], LAK:[22.3482,114.1265], TSY:[22.3588,114.1070], SUN:[22.3218,114.0305], TUC:[22.2895,113.9415], SSP:[22.3308,114.1622], CSW:[22.3358,114.1558], LCK:[22.3372,114.1488], MEF:[22.3375,114.1402], KWF:[22.3568,114.1280], TWH:[22.3638,114.1315], TSW:[22.3738,114.1172], TUM:[22.3952,113.9738], SIH:[22.4118,113.9782], TIS:[22.4475,114.0028], LOP:[22.4478,114.0238], YUL:[22.4468,114.0348], KSR:[22.4338,114.0648], TWW:[22.3688,114.1112], AUS:[22.3048,114.1668], ETS:[22.2968,114.1740], TKW:[22.3178,114.1888], SUW:[22.3282,114.1902], KAT:[22.3318,114.2008], HIK:[22.3638,114.1738], CHT:[22.3758,114.1858], STW:[22.3788,114.1948], CIO:[22.3858,114.2038], SHM:[22.3888,114.2088], TSH:[22.4082,114.2222], HEO:[22.4182,114.2268], MOS:[22.4248,114.2318], WKS:[22.4288,114.2428] };
 
         const MTR_DB = {
             'KTL': { name: '觀塘綫', color: '#00A84D', order: ['WHA','HOM','YMT','MOK','PRE','SKM','KOT','LOF','WTS','DIH','CHH','KOB','NTK','KWT','LAT','YAT','TIK'], times: { WHA:0, HOM:2, YMT:4, MOK:6, PRE:8, SKM:10, KOT:13, LOF:15, WTS:17, DIH:19, CHH:21, KOB:23, NTK:25, KWT:27, LAT:30, YAT:33, TIK:37 }, names: { WHA:'黃埔', HOM:'何文田', YMT:'油麻地', MOK:'旺角', PRE:'太子', SKM:'石硤尾', KOT:'九龍塘', LOF:'樂富', WTS:'黃大仙', DIH:'鑽石山', CHH:'彩虹', KOB:'九龍灣', NTK:'牛頭角', KWT:'觀塘', LAT:'藍田', YAT:'油塘', TIK:'調景嶺' }},
             'TWL': { name: '荃灣綫', color: '#E2231A', order: ['CEN','ADM','TST','JOR','YMT','MOK','PRE','SSP','CSW','LCK','MEF','LAK','KWF','TWH','TSW'], times: { CEN:0, ADM:3, TST:6, JOR:8, YMT:10, MOK:12, PRE:14, SSP:16, CSW:18, LCK:20, MEF:22, LAK:26, KWF:29, TWH:31, TSW:34 }, names: { CEN:'中環', ADM:'金鐘', TST:'尖沙咀', JOR:'佐敦', YMT:'油麻地', MOK:'旺角', PRE:'太子', SSP:'深水埗', CSW:'長沙灣', LCK:'荔枝角', MEF:'美孚', LAK:'荔景', KWF:'葵芳', TWH:'葵興', TSW:'荃灣' }},
-            'ISL': { name: '港島綫', color: '#007FFF', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWH','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲箕灣', HFC:'杏花邨', CHW:'柴灣' }},
-            'TKL': { name: '將軍澳綫', color: '#A35EB5', order: ['NOP','QUB','YAT','TIK','TKO','HAH','POA'], times: { NOP:0, QUB:2, YAT:6, TIK:9, TKO:11, HAH:13, POA:15 }, names: { NOP:'北角', QUB:'鰂魚涌', YAT:'油塘', TIK:'調景嶺', TKO:'將軍澳', HAH:'坑口', POA:'寶琳' }},
-            'EAL': { name: '東鐵綫', color: '#53B7E8', order: ['ADM','EXC','HUH','MKK','KOT','TAW','SHT','FOT','UNI','TAP','TWO','FAN','SHS','LOW'], times: { ADM:0, EXC:2, HUH:5, MKK:8, KOT:11, TAW:16, SHT:19, FOT:22, UNI:27, TAP:33, TWO:36, FAN:41, SHS:44, LOW:48 }, names: { ADM:'金鐘', EXC:'會展', HUH:'紅磡', MKK:'旺角東', KOT:'九龍塘', TAW:'大圍', SHT:'沙田', FOT:'火炭', UNI:'大學', TAP:'大埔墟', TWO:'太和', FAN:'粉嶺', SHS:'上水', LOW:'羅湖' }},
-            'TML': { name: '屯馬綫', color: '#923011', order: ['TUM','SIH','TIS','LOP','YUL','KSR','TWW','MEF','NAC','AUS','ETS','HUH','HOM','TKW','SUW','KAT','DIH','HIK','TAW','CHT','STW','CIO','SHM','TSH','HEO','MOS','WKS'], times: { TUM:0, SIH:3, TIS:6, LOP:9, YUL:11, KSR:15, TWW:21, MEF:26, NAC:29, AUS:33, ETS:36, HUH:39, HOM:41, TKW:43, SUW:45, KAT:47, DIH:49, HIK:53, TAW:56, CHT:58, STW:60, CIO:62, SHM:64, TSH:67, HEO:69, MOS:71, WKS:74 }, names: { TUM:'屯門', SIH:'兆康', TIS:'天水圍', LOP:'朗屏', YUL:'元朗', KSR:'錦上路', TWW:'荃灣西', MEF:'美孚', NAC:'南昌', AUS:'柯士甸', ETS:'尖東', HUH:'紅磡', HOM:'何文田', TKW:'土瓜灣', SUW:'宋皇臺', KAT:'啟德', DIH:'鑽石山', HIK:'顯徑', TAW:'大圍', CHT:'車公廟', STW:'沙田圍', CIO:'第一城', SHM:'石門', TSH:'大水坑', HEO:'恆安', MOS:'馬鞍山', WKS:'烏溪沙' }},
-            'TCL': { name: '東涌綫', color: '#F38B00', order: ['HOK','KOW','OLY','NAC','LAK','TSY','SUN','TUC'], times: { HOK:0, KOW:3, OLY:5, NAC:8, LAK:12, TSY:15, SUN:23, TUC:31 }, names: { HOK:'香港', KOW:'九龍', OLY:'奧運', NAC:'南昌', LAK:'荔景', TSY:'青衣', SUN:'欣澳', TUC:'東涌' }}
+            'ISL': { name: '港島綫', color: '#007FFF', order: ['KET','HKU','SYP','SHW','CEN','ADM','WAC','CAB','TIN','FOH','NOP','QUB','TAK','SWH','SKW','HFC','CHW'], times: { KET:0, HKU:2, SYP:4, SHW:6, CEN:8, ADM:10, WAC:12, CAB:14, TIN:16, FOH:18, NOP:20, QUB:22, TAK:24, SWH:26, SKW:28, HFC:31, CHW:34 }, names: { KET:'堅尼地城', HKU:'香港大學', SYP:'西營盤', SHW:'上環', CEN:'中環', ADM:'金鐘', WAC:'灣仔', CAB:'銅鑼灣', TIN:'天后', FOH:'炮台山', NOP:'北角', QUB:'鰂魚涌', TAK:'太古', SWH:'西灣河', SKW:'筲箕灣', HFC:'杏花邨', CHW:'柴灣' }}
         };
 
         const PREF_HUBS = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
@@ -211,56 +208,71 @@
             return null;
         }
 
-        // --- 🚀 終極核心：一鍵智能運算全行程大腦 ---
+        // 🧠 核心資料同步函數：確保選單永遠顯示大腦最新算出的車站
+        function syncFormValues() {
+            document.getElementById('cfg-start-name').value = curCfg.startName;
+            document.getElementById('cfg-walk1').value = curCfg.walk1;
+            document.getElementById('cfg-dest-name').value = curCfg.destName;
+            document.getElementById('cfg-walk2').value = curCfg.walk2;
+            document.getElementById('cfg-start-sta').value = curCfg.sCode;
+            document.getElementById('cfg-end-sta').value = curCfg.eCode;
+        }
+
+        function toggleConfig() { 
+            const p = document.getElementById('config-panel');
+            if (p.style.display !== 'block') {
+                syncFormValues(); // 每次打開設定頁，強制刷新下拉選單
+                p.style.display = 'block';
+            } else {
+                p.style.display = 'none';
+            }
+        }
+
         async function runAutoPathfinder() {
             const btn = document.getElementById('btn-save-main');
             const origText = btn.innerText;
             btn.innerText = "🧠 AI 地圖尋路掃描中..."; btn.disabled = true;
 
-            let sName = document.getElementById('cfg-start-name').value;
-            let dName = document.getElementById('cfg-dest-name').value;
+            let sName = document.getElementById('cfg-start-name').value.trim();
+            let dName = document.getElementById('cfg-dest-name').value.trim();
             let sCode = document.getElementById('cfg-start-sta').value;
             let eCode = document.getElementById('cfg-end-sta').value;
             let w1 = parseInt(document.getElementById('cfg-walk1').value) || 4;
             let w2 = parseInt(document.getElementById('cfg-walk2').value) || 3;
 
             try {
-                // 強制覆蓋起點
-                if (sName) {
+                if (sName && sName.toUpperCase() === 'APM') {
+                    sCode = 'KWT'; w1 = 4;
+                } else if (sName) {
                     const c1 = await geocodeAddress(sName);
                     if (c1) {
                         sCode = getClosestMTRCode(c1.lat, c1.lon);
-                        document.getElementById('cfg-start-sta').value = sCode;
-                        
                         let sCoords = MTR_GEO[sCode];
                         let r = await fetch(`https://router.project-osrm.org/route/v1/foot/${c1.lon},${c1.lat};${sCoords[1]},${sCoords[0]}`);
                         let rd = await r.json();
                         w1 = Math.max(1, Math.round((rd.routes[0].duration / 60) + getMazePenalty(sCode)));
-                        document.getElementById('cfg-walk1').value = w1;
                     }
                 }
 
-                // 強制覆蓋終點
-                if (dName && dName !== 'K11') {
+                if (dName && dName.toUpperCase() === 'K11') {
+                    eCode = 'TST'; w2 = 3;
+                } else if (dName) {
                     const c2 = await geocodeAddress(dName);
                     if (c2) {
                         eCode = getClosestMTRCode(c2.lat, c2.lon);
-                        document.getElementById('cfg-end-sta').value = eCode;
-                        
                         let eCoords = MTR_GEO[eCode];
                         let r2 = await fetch(`https://router.project-osrm.org/route/v1/foot/${c2.lon},${c2.lat};${eCoords[1]},${eCoords[0]}`);
                         let rd2 = await r2.json();
                         w2 = Math.max(1, Math.round((rd2.routes[0].duration / 60) + getMazePenalty(eCode)));
-                        document.getElementById('cfg-walk2').value = w2;
                     }
-                } else if (dName === 'K11') {
-                    eCode = 'TST'; document.getElementById('cfg-end-sta').value = 'TST';
-                    w2 = 3; document.getElementById('cfg-walk2').value = 3;
                 }
 
-                curCfg = { startName: sName||'起點', walk1: w1, sCode: sCode, eCode: eCode, walk2: w2, destName: dName||'終點' };
-                localStorage.setItem('my_commute_ai_v8', JSON.stringify(curCfg));
-                toggleConfig(); applyUI(); fetchMTR();
+                curCfg = { startName: sName||'APM', walk1: w1, sCode: sCode, eCode: eCode, walk2: w2, destName: dName||'K11' };
+                localStorage.setItem('my_commute_ai_v10', JSON.stringify(curCfg));
+                
+                syncFormValues(); // 運算完畢，立刻回寫給表單選單
+                document.getElementById('config-panel').style.display = 'none';
+                applyUI(); fetchMTR();
 
             } catch(e) { alert("智能導航偏差：" + e.message); }
             btn.innerText = origText; btn.disabled = false;
@@ -272,6 +284,9 @@
             const targetId = type === 'start' ? 'cfg-walk1' : 'cfg-walk2';
             if (!pName) return alert('請先輸入門牌名稱！');
             
+            if(type === 'start' && pName.toUpperCase() === 'APM') { document.getElementById(targetId).value = 4; return; }
+            if(type === 'dest' && pName.toUpperCase() === 'K11') { document.getElementById(targetId).value = 3; return; }
+
             const c = await geocodeAddress(pName);
             if(c) {
                 let sC = MTR_GEO[sCode];
@@ -312,8 +327,8 @@
             return { type: 0, line1: lA[0], s1: sCode, e1: sCode, ride: 15 };
         }
 
-        const DEF_CFG = { startName: '富強苑', walk1: 4, sCode: 'LOF', eCode: 'TST', walk2: 3, destName: 'K11' };
-        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v8')) || DEF_CFG;
+        const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 3, destName: 'K11' };
+        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v10')) || DEF_CFG;
         let activeRoute = null; let isSprintOpen = false;
 
         function toggleSprintDrawer() {
@@ -344,13 +359,9 @@
 
         function initApp() {
             populateSelects();
-            document.getElementById('cfg-start-name').value = curCfg.startName; document.getElementById('cfg-walk1').value = curCfg.walk1;
-            document.getElementById('cfg-start-sta').value = curCfg.sCode; document.getElementById('cfg-end-sta').value = curCfg.eCode;
-            document.getElementById('cfg-dest-name').value = curCfg.destName; document.getElementById('cfg-walk2').value = curCfg.walk2;
+            syncFormValues(); // 啟動即回寫快取給表單
             applyUI(); fetchMTR(); setInterval(fetchMTR, 10000);
         }
-
-        function toggleConfig() { document.getElementById('config-panel').style.display = document.getElementById('config-panel').style.display === 'block' ? 'none' : 'block'; }
 
         function applyUI() {
             activeRoute = calculateAutoRoute(curCfg.sCode, curCfg.eCode);
