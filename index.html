@@ -426,18 +426,15 @@
             const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message'), W = curCfg.walk1, now = new Date();
             const sprintTrains = t1.filter(t => parseInt(t.ttnt) < W && !isNaN(parseInt(t.ttnt))), walkTrains = t1.filter(t => parseInt(t.ttnt) >= W);
             
-            // 🎯 【Bug 完美斬草除根】
-            // 廢除原本危險的保底 fallback。只容許抽取真正符合大於或等於步行時間的班次。
             let showWalk = walkTrains.slice(0, 2);
             let isMid = !walkTrains.length && !sprintTrains.length;
 
-            let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 第一程：${MTR_DB[activeRoute.line1].name} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
+            // 🎯 【Bug 1 修正】動態判斷直達還是跨綫，告別永遠寫死「第一程」的愚蠢邏輯
+            let lineTitle = activeRoute.type === 0 ? `直達路綫：${MTR_DB[activeRoute.line1].name}` : `第一程：${MTR_DB[activeRoute.line1].name}`;
+            let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 ${lineTitle} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
 
-            // 📢 核心修正：黃色抽屜顯示的計數「sprintTrains.length」與下面跑出來的卡片數量完美對稱
             if (sprintTrains.length > 0) {
                 html += `<div class="sprint-capsule" onclick="toggleSprintDrawer()"><span>💡 已收起 ${sprintTrains.length} 班狂奔列車</span><b id="sprint-arrow-icon">${isSprintOpen ? '▲' : '▼'}</b></div><div id="sprint-drawer-box" class="sprint-drawer ${isSprintOpen ? 'open' : ''}">`;
-                
-                // 去除 .slice(0, 2) 的粗暴閹割！有多少班，點開就向用家展示多少班
                 sprintTrains.forEach(t => {
                     let sm = parseInt(t.ttnt), hypDest = new Date(now.getTime() + (sm + activeRoute.ride + curCfg.walk2) * 60000);
                     html += `<div class="sprint-card-item"><div><span style="color:#f87171; font-size:0.85rem; font-weight:700;">🏃‍♂️ 極速狂奔（${sm}分到站）</span><div style="font-size:0.72rem; color:#94a3b8;">衝到 ➔ <b style="color:#fbbf24">${fmtC(hypDest)}</b> 抵達</div></div><span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span></div>`;
@@ -463,7 +460,19 @@
             }
             listHtml.innerHTML = html;
 
-            let tMins = parseInt((showWalk[0] || t1[0])?.ttnt) || 0;
+            // 🎯 【Bug 2 核心修正：防時空穿越算法】
+            // 如果正常步速 (showWalk) 有車，時鐘嚴格對齊第一班穩陣車
+            // 如果正常步速無車，代表你行路太慢！此時上車那一格的時間，絕對不能取 t1[0] (已開走的車)，
+            // 必須改為：現在時間 + 10 分鐘步行時間，作為「踏上月台」的起點錨定，再尋找第一班你等得到的狂奔車/後備車來投影！
+            let tMins = 0;
+            if (showWalk.length > 0) {
+                tMins = parseInt(showWalk[0].ttnt) || 0;
+            } else {
+                // 找出第一班到站時間大於等於 0 的有效車（即狂奔清單裡最快的那班）
+                let backupTrain = t1.find(t => !isNaN(parseInt(t.ttnt)) && parseInt(t.ttnt) >= 0);
+                tMins = backupTrain ? Math.max(W, parseInt(backupTrain.ttnt)) : W; 
+            }
+
             let tBoard = new Date(now.getTime() + tMins * 60000);
             let tlContainer = document.getElementById('dynamic-timeline-box');
             let tlHtml = '';
