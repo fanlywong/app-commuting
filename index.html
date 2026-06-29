@@ -28,6 +28,9 @@
         .cfg-group label { font-size: 0.75rem; color: var(--text-sub); font-weight: bold;}
         .cfg-group input, .cfg-group select { background: var(--input-bg); border: 1px solid #475569; color: white; padding: 10px; border-radius: 8px; font-size: 0.95rem; outline: none; width:100%; box-sizing:border-box;}
         
+        optgroup { font-weight: bold; color: #38bdf8; background: #0f172a; }
+        option { color: #f8fafc; background: #1e293b; padding: 4px 0;}
+
         .input-with-btn { display: flex; gap: 6px; }
         .btn-walk-api { background: #0284c7; color: white; border: none; padding: 0 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer; white-space: nowrap; flex-shrink:0;}
         
@@ -47,7 +50,6 @@
         .section-title { font-size: 1.1rem; font-weight: bold; color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;}
         .route-sub-title { font-size: 0.85rem; color: #38bdf8; margin: 12px 0 4px 0; font-weight: bold; display: flex; align-items: center; gap: 6px;}
 
-        /* 🟢 優雅摺疊膠囊按鈕 */
         .sprint-capsule {
             background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24;
             padding: 8px 14px; border-radius: 30px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
@@ -56,7 +58,6 @@
         }
         .sprint-capsule:active { transform: scale(0.98); background: rgba(245, 158, 11, 0.2); }
 
-        /* 霧面半透明懸浮狂奔卡 */
         .sprint-drawer {
             display: none; flex-direction: column; gap: 6px; margin-bottom: 10px;
             padding: 4px; border-left: 2px dashed #ef444450;
@@ -231,10 +232,10 @@
             return { type: 0, line1: lA[0], s1: sCode, e1: sCode, ride: 15 };
         }
 
-        const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: 'K11' };
-        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v4')) || DEF_CFG;
+        const DEF_CFG = { startName: 'APM', walk1: 4, sCode: 'KWT', eCode: 'TST', walk2: 10, destName: '形品星寓' };
+        let curCfg = JSON.parse(localStorage.getItem('my_commute_ai_v5')) || DEF_CFG;
         let activeRoute = null;
-        let isSprintOpen = false; // 記憶摺疊卡狀態
+        let isSprintOpen = false;
 
         function toggleSprintDrawer() {
             isSprintOpen = !isSprintOpen;
@@ -247,13 +248,28 @@
             }
         }
 
+        // --- 🧠 核心升級：去重車站智能生成演算法 ---
         function populateSelects() {
             const s1 = document.getElementById('cfg-start-sta'), s2 = document.getElementById('cfg-end-sta');
-            let html = '';
+            
+            const hubs = Object.keys(STA_INDEX).filter(c => STA_INDEX[c].lines.length > 1);
+            const VIP_ORDER = ['MOK','ADM','CEN','TST','KOT','HUH','TAW','DIH','PRE','YMT','NOP','QUB','YAT','TIK','MEF','NAC','LAK','HOM'];
+            hubs.sort((a, b) => (VIP_ORDER.indexOf(a) === -1 ? 999 : VIP_ORDER.indexOf(a)) - (VIP_ORDER.indexOf(b) === -1 ? 999 : VIP_ORDER.indexOf(b)));
+
+            let html = `<optgroup label="── 🔥 核心轉車站 (互通多綫) ──">`;
+            hubs.forEach(c => {
+                let lNames = STA_INDEX[c].lines.map(l => MTR_DB[l].name.replace('綫','')).join('/');
+                html += `<option value="${c}">${STA_INDEX[c].name}站 (${lNames}綫)</option>`;
+            });
+            html += `</optgroup>`;
+
             for (let l in MTR_DB) {
-                html += `<optgroup label="── ${MTR_DB[l].name} ──">`;
-                MTR_DB[l].order.forEach(c => { html += `<option value="${c}">${MTR_DB[l].names[c]}站</option>`; });
-                html += `</optgroup>`;
+                const pureStas = MTR_DB[l].order.filter(c => STA_INDEX[c].lines.length === 1);
+                if (pureStas.length > 0) {
+                    html += `<optgroup label="── ${MTR_DB[l].name} (沿綫獨有站) ──">`;
+                    pureStas.forEach(c => { html += `<option value="${c}">${MTR_DB[l].names[c]}站</option>`; });
+                    html += `</optgroup>`;
+                }
             }
             s1.innerHTML = html; s2.innerHTML = html;
         }
@@ -279,7 +295,7 @@
                 sCode: document.getElementById('cfg-start-sta').value, eCode: document.getElementById('cfg-end-sta').value,
                 walk2: parseInt(document.getElementById('cfg-walk2').value) || 10, destName: document.getElementById('cfg-dest-name').value || '終點'
             };
-            localStorage.setItem('my_commute_ai_v4', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
+            localStorage.setItem('my_commute_ai_v5', JSON.stringify(curCfg)); toggleConfig(); applyUI(); fetchMTR();
         }
 
         function applyUI() {
@@ -330,7 +346,6 @@
             const now = new Date(); document.getElementById('update-time').innerText = `最後同步: ${fmtT(now)}:${now.getSeconds().toString().padStart(2, '0')}`;
         }
 
-        // --- 核心改造：摺疊式熱血狂奔卡區塊 ---
         function renderDashboard(t1, t2) {
             const listHtml = document.getElementById('train-list'), eBox = document.getElementById('emotion-message');
             const W = curCfg.walk1;
@@ -344,7 +359,6 @@
 
             let html = `<div class="route-sub-title" style="color:${MTR_DB[activeRoute.line1].color}">🚇 第一程：${MTR_DB[activeRoute.line1].name} (${STA_INDEX[activeRoute.s1].name}站出發)</div>`;
 
-            // 🟢 如果偵測到有跑步車，先插入摺疊膠囊按鈕
             if (sprintTrains.length > 0) {
                 html += `
                 <div class="sprint-capsule" onclick="toggleSprintDrawer()">
@@ -366,10 +380,9 @@
                         <span style="font-size:1.4rem; font-weight:800; color:#ef4444;">${sm}分</span>
                     </div>`;
                 });
-                html += `</div>`; // 完結霧面抽屜
+                html += `</div>`;
             }
 
-            // 穩陣行路車專區（永遠放主視覺）
             showWalk.forEach((t, i) => {
                 let m = parseInt(t.ttnt);
                 let isUrgent = (m === W || m === W + 1);
@@ -388,7 +401,6 @@
             }
             listHtml.innerHTML = html;
 
-            // 死守穩陣線大時鐘
             let mainAnchorTrain = showWalk[0] || t1[0];
             let tMins = parseInt(mainAnchorTrain?.ttnt) || 0;
             let tB = new Date(now.getTime() + tMins*60000);
